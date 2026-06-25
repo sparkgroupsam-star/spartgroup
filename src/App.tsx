@@ -133,11 +133,15 @@ export default function App() {
       if (clientToEdit) {
         const index = newClients.findIndex(c => c.id === clientToEdit.id);
         if (index !== -1) {
-          newClients[index] = {
+          const updatedClient = {
             ...newClients[index],
             ...clientData,
             updatedAt: new Date().toISOString()
           };
+          newClients[index] = updatedClient;
+          if (selectedClient?.id === clientToEdit.id) {
+            setSelectedClient(updatedClient);
+          }
         }
         setClientToEdit(null);
       } else {
@@ -893,6 +897,7 @@ export default function App() {
                   clients={clients} 
                   onUpdateClientStage={handleUpdateClientStage} 
                   onClientClick={setSelectedClient}
+                  onEditClientClick={handleEditClick}
                 />
               )}
             </div>

@@ -1,7 +1,8 @@
 import React from "react";
 import { 
   ArrowLeft, ArrowRight, Building, Mail, Phone, DollarSign, 
-  Calendar, CheckCircle, Clock, User, Sparkles, MessageSquare, Briefcase 
+  Calendar, CheckCircle, Clock, User, Sparkles, MessageSquare, Briefcase,
+  FileEdit
 } from "lucide-react";
 import { CRMClient } from "../types";
 
@@ -9,6 +10,7 @@ interface CRMKanbanViewProps {
   clients: CRMClient[];
   onUpdateClientStage: (clientId: string, newStage: CRMClient["stage"]) => void;
   onClientClick: (client: CRMClient) => void;
+  onEditClientClick?: (client: CRMClient) => void;
 }
 
 const STAGES: CRMClient["stage"][] = [
@@ -19,7 +21,7 @@ const STAGES: CRMClient["stage"][] = [
   "Perdido"
 ];
 
-export default function CRMKanbanView({ clients, onUpdateClientStage, onClientClick }: CRMKanbanViewProps) {
+export default function CRMKanbanView({ clients, onUpdateClientStage, onClientClick, onEditClientClick }: CRMKanbanViewProps) {
   
   // Drag and Drop handlers
   const handleDragStart = (e: React.DragEvent, clientId: string) => {
@@ -217,7 +219,17 @@ export default function CRMKanbanView({ clients, onUpdateClientStage, onClientCl
                             </div>
 
                             {/* visual column shifting controls for mobile / accessibility */}
-                            <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()} id={`shift-controls-${client.id}`}>
+                            <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()} id={`shift-controls-${client.id}`}>
+                              {onEditClientClick && (
+                                <button
+                                  onClick={() => onEditClientClick(client)}
+                                  className="p-1 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 rounded-lg text-slate-500 hover:text-indigo-600 transition-all"
+                                  title="Editar cliente"
+                                  id={`edit-card-${client.id}`}
+                                >
+                                  <FileEdit className="h-3 w-3" />
+                                </button>
+                              )}
                               {STAGES.indexOf(stage) > 0 && (
                                 <button
                                   onClick={() => onUpdateClientStage(client.id, STAGES[STAGES.indexOf(stage) - 1])}
