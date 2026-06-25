@@ -1,0 +1,6 @@
+{
+  "name": "Spark Group",
+  "description": "Un sistema completo de CRM y embudo de ventas en la nube con base de datos en Firebase. Reemplaza tus hojas de cálculo con una interfaz moderna, tableros Kanban interactivos, analíticas en tiempo real y asistente con Inteligencia Artificial.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
