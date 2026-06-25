@@ -2,7 +2,7 @@ import React from "react";
 import { 
   ArrowLeft, ArrowRight, Building, Mail, Phone, DollarSign, 
   Calendar, CheckCircle, Clock, User, Sparkles, MessageSquare, Briefcase,
-  FileEdit
+  FileEdit, Trash2
 } from "lucide-react";
 import { CRMClient } from "../types";
 
@@ -11,6 +11,7 @@ interface CRMKanbanViewProps {
   onUpdateClientStage: (clientId: string, newStage: CRMClient["stage"]) => void;
   onClientClick: (client: CRMClient) => void;
   onEditClientClick?: (client: CRMClient) => void;
+  onDeleteClient?: (clientId: string) => void;
 }
 
 const STAGES: CRMClient["stage"][] = [
@@ -21,7 +22,13 @@ const STAGES: CRMClient["stage"][] = [
   "Perdido"
 ];
 
-export default function CRMKanbanView({ clients, onUpdateClientStage, onClientClick, onEditClientClick }: CRMKanbanViewProps) {
+export default function CRMKanbanView({ 
+  clients, 
+  onUpdateClientStage, 
+  onClientClick, 
+  onEditClientClick,
+  onDeleteClient
+}: CRMKanbanViewProps) {
   
   // Drag and Drop handlers
   const handleDragStart = (e: React.DragEvent, clientId: string) => {
@@ -228,6 +235,20 @@ export default function CRMKanbanView({ clients, onUpdateClientStage, onClientCl
                                   id={`edit-card-${client.id}`}
                                 >
                                   <FileEdit className="h-3 w-3" />
+                                </button>
+                              )}
+                              {onDeleteClient && (
+                                <button
+                                  onClick={() => {
+                                    if (window.confirm(`¿Estás seguro de que deseas eliminar a ${client.name}?`)) {
+                                      onDeleteClient(client.id);
+                                    }
+                                  }}
+                                  className="p-1 border border-slate-200 hover:border-rose-400 hover:bg-rose-50 rounded-lg text-slate-500 hover:text-rose-600 transition-all"
+                                  title="Eliminar cliente"
+                                  id={`delete-card-${client.id}`}
+                                >
+                                  <Trash2 className="h-3 w-3" />
                                 </button>
                               )}
                               {STAGES.indexOf(stage) > 0 && (

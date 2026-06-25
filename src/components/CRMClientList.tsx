@@ -3,7 +3,8 @@ import {
   Search, Filter, Plus, FileDown, FileUp, Sparkles, User, 
   Building, Mail, Phone, DollarSign, Tag, Calendar, MoreVertical, 
   Trash2, FileText, CheckCircle, ChevronRight, Download, Upload,
-  Clock, MapPin, AlertCircle, Bot, Users, Megaphone, CheckSquare, ListFilter, Play
+  Clock, MapPin, AlertCircle, Bot, Users, Megaphone, CheckSquare, ListFilter, Play,
+  FileEdit
 } from "lucide-react";
 import { CRMClient } from "../types";
 import * as XLSX from "xlsx";
@@ -801,9 +802,32 @@ export default function CRMClientList({
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
+                                onEditClientClick(item);
+                              }}
+                              className="p-1 border border-slate-150 hover:border-indigo-400 hover:bg-indigo-50 rounded-lg text-slate-400 hover:text-indigo-600 transition-colors bg-white shadow-sm"
+                              title="Editar registro"
+                            >
+                              <FileEdit className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (window.confirm(`¿Estás seguro de que deseas eliminar a ${item.name}?`)) {
+                                  onDeleteClient(item.id);
+                                }
+                              }}
+                              className="p-1 border border-slate-150 hover:border-rose-400 hover:bg-rose-50 rounded-lg text-slate-400 hover:text-rose-600 transition-colors bg-white shadow-sm"
+                              title="Eliminar registro"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 onClientClick(item);
                               }}
                               className="p-1 border border-slate-150 hover:border-indigo-400 hover:text-indigo-600 rounded-lg text-slate-400 transition-colors bg-white shadow-sm"
+                              title="Ver detalles"
                             >
                               <ChevronRight className="h-3.5 w-3.5" />
                             </button>
@@ -1052,6 +1076,24 @@ export default function CRMClientList({
                             <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
                               <div className="flex items-center justify-end gap-1.5">
                                 <button
+                                  onClick={() => onEditClientClick(client)}
+                                  className="p-1.5 border border-slate-150 hover:border-indigo-400 hover:text-indigo-600 rounded-lg text-slate-400 transition-colors bg-white shadow-sm"
+                                  title="Editar registro"
+                                >
+                                  <FileEdit className="h-4 w-4" />
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    if (window.confirm(`¿Estás seguro de que deseas eliminar a ${client.name}?`)) {
+                                      onDeleteClient(client.id);
+                                    }
+                                  }}
+                                  className="p-1.5 border border-slate-150 hover:border-rose-400 hover:text-rose-600 rounded-lg text-slate-400 transition-colors bg-white shadow-sm"
+                                  title="Eliminar registro"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                                <button
                                   onClick={() => onClientClick(client)}
                                   className="p-1.5 border border-slate-150 hover:border-indigo-400 hover:text-indigo-600 rounded-lg text-slate-400 transition-colors bg-white shadow-sm"
                                   title="Ver detalles"
@@ -1130,6 +1172,24 @@ export default function CRMClientList({
                             <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
                               <div className="flex items-center justify-end gap-1.5">
                                 <button
+                                  onClick={() => onEditClientClick(client)}
+                                  className="p-1.5 border border-slate-150 hover:border-indigo-400 hover:text-indigo-600 rounded-lg text-slate-400 transition-colors bg-white shadow-sm"
+                                  title="Editar registro"
+                                >
+                                  <FileEdit className="h-4 w-4" />
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    if (window.confirm(`¿Estás seguro de que deseas eliminar a ${client.name}?`)) {
+                                      onDeleteClient(client.id);
+                                    }
+                                  }}
+                                  className="p-1.5 border border-slate-150 hover:border-rose-400 hover:text-rose-600 rounded-lg text-slate-400 transition-colors bg-white shadow-sm"
+                                  title="Eliminar registro"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                                <button
                                   onClick={() => onClientClick(client)}
                                   className="p-1.5 border border-slate-150 hover:border-indigo-400 hover:text-indigo-600 rounded-lg text-slate-400 transition-colors bg-white shadow-sm"
                                   title="Ver detalles"
@@ -1203,6 +1263,24 @@ export default function CRMClientList({
                             {/* Acciones */}
                             <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
                               <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  onClick={() => onEditClientClick(client)}
+                                  className="p-1.5 border border-slate-150 hover:border-indigo-400 hover:text-indigo-600 rounded-lg text-slate-400 transition-colors bg-white shadow-sm"
+                                  title="Editar registro"
+                                >
+                                  <FileEdit className="h-4 w-4" />
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    if (window.confirm(`¿Estás seguro de que deseas eliminar a ${client.name}?`)) {
+                                      onDeleteClient(client.id);
+                                    }
+                                  }}
+                                  className="p-1.5 border border-slate-150 hover:border-rose-400 hover:text-rose-600 rounded-lg text-slate-400 transition-colors bg-white shadow-sm"
+                                  title="Eliminar registro"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
                                 <button
                                   onClick={() => onClientClick(client)}
                                   className="p-1.5 border border-slate-150 hover:border-indigo-400 hover:text-indigo-600 rounded-lg text-slate-400 transition-colors bg-white shadow-sm"

@@ -898,6 +898,7 @@ export default function App() {
                   onUpdateClientStage={handleUpdateClientStage} 
                   onClientClick={setSelectedClient}
                   onEditClientClick={handleEditClick}
+                  onDeleteClient={handleDeleteClient}
                 />
               )}
             </div>
