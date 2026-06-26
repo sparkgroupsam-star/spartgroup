@@ -38,7 +38,7 @@ export default function CRMClientDetail({
     const noteItem: ClientNote = {
       id: `note-${Date.now()}`,
       text: newNote.trim(),
-      createdAt: new Date().toLocaleDateString("es-ES", {
+      createdAt: new Date().toLocaleDateString("en-US", {
         day: "numeric",
         month: "short",
         hour: "2-digit",
@@ -95,15 +95,15 @@ export default function CRMClientDetail({
   // Stage Badge stylings
   const getStageBadgeClass = (stage: CRMClient["stage"]) => {
     switch (stage) {
-      case "Prospecto":
+      case "Lead":
         return "bg-sky-50 text-sky-700 border-sky-200";
-      case "Contactado":
+      case "Contacted":
         return "bg-indigo-50 text-indigo-700 border-indigo-200";
-      case "Negociación":
+      case "Negotiation":
         return "bg-amber-50 text-amber-700 border-amber-200";
-      case "Ganado":
+      case "Won":
         return "bg-emerald-50 text-emerald-700 border-emerald-200";
-      case "Perdido":
+      case "Lost":
         return "bg-slate-100 text-slate-600 border-slate-200";
       default:
         return "bg-slate-50 text-slate-500 border-slate-200";
@@ -111,16 +111,15 @@ export default function CRMClientDetail({
   };
 
   const formattedDate = client.createdAt 
-    ? new Date(client.createdAt).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })
-    : "Sin fecha";
+    ? new Date(client.createdAt).toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" })
+    : "No date";
 
   return (
-    <div className="fixed inset-y-0 right-0 z-45 w-full max-w-md bg-white border-l border-slate-200 shadow-2xl flex flex-col h-screen animate-in slide-in-from-right duration-300" id="client-detail-sidebar">
-      {/* Header */}
+    <div className="fixed inset-y-0 right-0 z-45 w-full max-w-md bg-white border-l border-slate-200 shadow-2xl flex flex-col h-screen animate-in slide-in-from-right duration-300" id="client-detail-sidebar">      {/* Header */}
       <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50" id="detail-header">
         <div>
           <span className="text-[10px] font-mono font-bold text-slate-400 block uppercase tracking-wider">
-            Detalle del Contacto
+            Contact Details
           </span>
           <h3 className="text-base font-extrabold text-slate-900 mt-0.5 line-clamp-1" id="detail-client-name">
             {client.name}
@@ -145,7 +144,7 @@ export default function CRMClientDetail({
             </span>
             <span className="text-[10px] text-slate-400 font-mono flex items-center gap-1 font-semibold">
               <Calendar className="h-3 w-3" />
-              Ingreso: {formattedDate}
+              Created: {formattedDate}
             </span>
           </div>
 
@@ -153,7 +152,7 @@ export default function CRMClientDetail({
             {client.company && (
               <div className="flex items-center gap-2" id="detail-field-company">
                 <Building className="h-4 w-4 text-slate-400 shrink-0" />
-                <span className="font-semibold text-slate-500">Negocio:</span>
+                <span className="font-semibold text-slate-500">Business:</span>
                 <span className="font-bold text-slate-800">{client.company}</span>
               </div>
             )}
@@ -161,7 +160,7 @@ export default function CRMClientDetail({
             {client.email && (
               <div className="flex items-center gap-2" id="detail-field-email">
                 <Mail className="h-4 w-4 text-slate-400 shrink-0" />
-                <span className="font-semibold text-slate-500">Correo:</span>
+                <span className="font-semibold text-slate-500">Email:</span>
                 <a href={`mailto:${client.email}`} className="text-indigo-600 hover:underline font-bold truncate">
                   {client.email}
                 </a>
@@ -171,14 +170,14 @@ export default function CRMClientDetail({
             {client.phone && (
               <div className="flex items-center gap-2" id="detail-field-phone">
                 <Phone className="h-4 w-4 text-slate-400 shrink-0" />
-                <span className="font-semibold text-slate-500">Tel/WhatsApp:</span>
+                <span className="font-semibold text-slate-500">Phone/WhatsApp:</span>
                 <span className="font-bold text-slate-800">{client.phone}</span>
               </div>
             )}
 
             <div className="flex items-center gap-2 border-t border-slate-100/60 pt-2.5 mt-1" id="detail-field-value">
               <DollarSign className="h-4 w-4 text-emerald-500 shrink-0" />
-              <span className="font-semibold text-slate-500">Valor de Cuenta / Trato:</span>
+              <span className="font-semibold text-slate-500">Account Value / Deal:</span>
               <span className="font-black text-emerald-600 text-sm">
                 {Number(client.value || 0).toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })}
               </span>
@@ -188,42 +187,42 @@ export default function CRMClientDetail({
             {client.category && (
               <div className="border-t border-slate-200/60 pt-3 mt-3 space-y-2.5 text-[11px] text-slate-600">
                 <span className="text-[10px] font-mono font-black text-slate-400 block uppercase tracking-wider">
-                  Detalles de {client.category === "event_tracker" ? "Event Tracker" : client.category === "clientes_pendientes" ? "Clientes Pendientes" : client.category === "daily_event_planner" ? "Planner Diario" : "Event Marketing"}
+                  Details for {client.category === "event_tracker" ? "Event Tracker" : client.category === "clientes_pendientes" ? "Pending Clients" : client.category === "daily_event_planner" ? "Daily Planner" : "Event Marketing"}
                 </span>
 
                 {client.eventType && (
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-slate-500">Tipo de Evento:</span>
+                    <span className="font-semibold text-slate-500">Event Type:</span>
                     <span className="font-bold text-slate-800">{client.eventType}</span>
                   </div>
                 )}
                 {client.eventDate && (
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-slate-500">Fecha del Evento:</span>
+                    <span className="font-semibold text-slate-500">Event Date:</span>
                     <span className="font-bold text-indigo-700 font-mono">{client.eventDate}</span>
                   </div>
                 )}
                 {client.address && (
                   <div className="flex items-start gap-2">
-                    <span className="font-semibold text-slate-500 shrink-0">Dirección:</span>
+                    <span className="font-semibold text-slate-500 shrink-0">Address:</span>
                     <span className="font-bold text-slate-800">{client.address}</span>
                   </div>
                 )}
                 {client.location && client.location !== client.address && (
                   <div className="flex items-start gap-2">
-                    <span className="font-semibold text-slate-500 shrink-0">Locación:</span>
+                    <span className="font-semibold text-slate-500 shrink-0">Location:</span>
                     <span className="font-bold text-slate-800">{client.location}</span>
                   </div>
                 )}
                 {client.eventHours && (
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-slate-500">Horas Contratadas:</span>
-                    <span className="font-bold text-slate-800">{client.eventHours} horas</span>
+                    <span className="font-semibold text-slate-500">Contracted Hours:</span>
+                    <span className="font-bold text-slate-800">{client.eventHours} hours</span>
                   </div>
                 )}
                 {(client.startTime || client.endTime) && (
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-slate-500">Horario:</span>
+                    <span className="font-semibold text-slate-500">Schedule:</span>
                     <span className="font-bold text-slate-800 font-mono">{client.startTime || "N/A"} - {client.endTime || "N/A"}</span>
                   </div>
                 )}
@@ -235,49 +234,49 @@ export default function CRMClientDetail({
                 )}
                 {client.djNeeded && (
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-slate-500">DJ Requerido:</span>
+                    <span className="font-semibold text-slate-500">DJ Needed:</span>
                     <span className="font-bold text-purple-700 bg-purple-50 border border-purple-100 px-1.5 py-0.5 rounded-lg text-[10px]">{client.djNeeded}</span>
                   </div>
                 )}
                 {client.helper && (
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-slate-500">Ayudante / Staff:</span>
+                    <span className="font-semibold text-slate-500">Helper / Staff:</span>
                     <span className="font-bold text-amber-700 bg-amber-50 border border-amber-100 px-1.5 py-0.5 rounded-lg text-[10px]">{client.helper}</span>
                   </div>
                 )}
                 {client.equipment && (
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-slate-500">Equipos:</span>
+                    <span className="font-semibold text-slate-500">Equipment:</span>
                     <span className="font-bold text-teal-700 bg-teal-50 border border-teal-100 px-1.5 py-0.5 rounded-lg text-[10px]">{client.equipment}</span>
                   </div>
                 )}
                 {client.contractStatus && (
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-slate-500">Estado de Contrato / Tarea:</span>
+                    <span className="font-semibold text-slate-500">Contract / Task Status:</span>
                     <span className="font-bold text-slate-800 bg-indigo-50 border border-indigo-100 px-1.5 py-0.5 rounded-lg text-[10px]">{client.contractStatus}</span>
                   </div>
                 )}
                 {client.invoiceSent && (
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-slate-500">Factura Enviada:</span>
+                    <span className="font-semibold text-slate-500">Invoice Sent:</span>
                     <span className="font-bold text-slate-800 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded-lg text-[10px]">{client.invoiceSent}</span>
                   </div>
                 )}
                 {client.marketingStaff && (
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-slate-500">Staff Marketing:</span>
+                    <span className="font-semibold text-slate-500">Marketing Staff:</span>
                     <span className="font-bold text-slate-800 bg-rose-50 border border-rose-100 px-1.5 py-0.5 rounded-lg text-[10px]">{client.marketingStaff}</span>
                   </div>
                 )}
                 {client.marketingValue && (
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-slate-500">Valor de Marketing:</span>
+                    <span className="font-semibold text-slate-500">Marketing Value:</span>
                     <span className="font-bold text-emerald-800 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded-lg text-[10px]">{client.marketingValue}</span>
                   </div>
                 )}
                 {client.info && (
                   <div className="flex flex-col gap-1 mt-1 bg-slate-100 p-2.5 rounded-xl border border-slate-200">
-                    <span className="font-black text-slate-500">Información / Notas:</span>
+                    <span className="font-black text-slate-500">Info / Notes:</span>
                     <span className="text-slate-700 italic font-medium whitespace-pre-wrap leading-relaxed">{client.info}</span>
                   </div>
                 )}
@@ -293,13 +292,13 @@ export default function CRMClientDetail({
               id="detail-edit-btn"
             >
               <FileEdit className="h-3.5 w-3.5" />
-              Modificar ficha
+              Modify profile
             </button>
 
             <button
               onClick={() => setShowConfirmDelete(true)}
               className="px-3 py-1.5 border border-slate-200 hover:border-rose-400 hover:bg-rose-50 hover:text-rose-600 text-slate-500 rounded-xl text-[11px] font-bold flex items-center justify-center transition-all shadow-sm"
-              title="Eliminar cliente"
+              title="Delete client"
               id="detail-delete-btn"
             >
               <Trash2 className="h-3.5 w-3.5" />
@@ -313,7 +312,7 @@ export default function CRMClientDetail({
             <div className="flex gap-2 items-start text-xs">
               <AlertCircle className="h-4 w-4 text-rose-600 shrink-0 mt-0.5" />
               <p className="font-bold leading-normal">
-                ¿Estás seguro de que deseas eliminar este cliente? Se borrarán de forma irreversible todas las notas e interacciones registradas.
+                Are you sure you want to delete this client? All registered notes and interactions will be permanently deleted.
               </p>
             </div>
             <div className="flex justify-end gap-2 text-[10px] font-bold">
@@ -322,7 +321,7 @@ export default function CRMClientDetail({
                 className="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50"
                 id="cancel-del-btn"
               >
-                No, mantener
+                No, keep
               </button>
               <button 
                 onClick={() => {
@@ -332,7 +331,7 @@ export default function CRMClientDetail({
                 className="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white rounded-lg"
                 id="confirm-del-btn"
               >
-                Sí, eliminar
+                Yes, delete
               </button>
             </div>
           </div>
@@ -342,7 +341,7 @@ export default function CRMClientDetail({
         <div className="space-y-3" id="detail-tasks-section">
           <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
             <CheckCircle className="h-4 w-4 text-indigo-500" /> 
-            Tareas y Seguimiento ({(client.tasks || []).filter(t => !t.completed).length})
+            Tasks & Follow-up ({(client.tasks || []).filter(t => !t.completed).length})
           </h4>
 
           {/* Task creation form */}
@@ -350,7 +349,7 @@ export default function CRMClientDetail({
             <input
               type="text"
               required
-              placeholder="Nueva tarea... (ej: Llamar para presupuestar)"
+              placeholder="New task... (e.g., Call for budget/details)"
               value={newTaskTitle}
               onChange={(e) => setNewTaskTitle(e.target.value)}
               className="flex-1 bg-white border border-slate-200 px-2.5 py-1.5 rounded-lg text-xs placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500"
@@ -401,7 +400,7 @@ export default function CRMClientDetail({
                       <span>{task.title}</span>
                       {task.dueDate && (
                         <span className="text-[9px] text-slate-400 block font-mono font-medium line-through-none mt-0.5">
-                          ⏰ Vence: {new Date(task.dueDate + "T00:00:00").toLocaleDateString("es-ES", { day: "numeric", month: "short" })}
+                          ⏰ Due: {new Date(task.dueDate + "T00:00:00").toLocaleDateString("en-US", { day: "numeric", month: "short" })}
                         </span>
                       )}
                     </div>
@@ -418,7 +417,7 @@ export default function CRMClientDetail({
               ))
             ) : (
               <div className="text-center py-4 text-[11px] text-slate-400 border border-dashed rounded-xl bg-slate-50/30" id="empty-tasks-placeholder">
-                Sin tareas pendientes. ¡Todo al día!
+                No pending tasks. Everything up to date!
               </div>
             )}
           </div>
@@ -428,7 +427,7 @@ export default function CRMClientDetail({
         <div className="space-y-3" id="detail-notes-section">
           <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
             <StickyNote className="h-4 w-4 text-indigo-500" /> 
-            Notas e Interacciones ({client.notes?.length || 0})
+            Notes & Interactions ({client.notes?.length || 0})
           </h4>
 
           {/* Quick Note Input */}
@@ -436,7 +435,7 @@ export default function CRMClientDetail({
             <textarea
               required
               rows={2}
-              placeholder="Registrar interacción o recordatorio de este cliente..."
+              placeholder="Record call, visit, or custom agreement with this client..."
               value={newNote}
               onChange={(e) => setNewNote(e.target.value)}
               className="w-full bg-slate-50/50 border border-slate-200 px-3 py-2 rounded-xl text-xs placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:bg-white resize-none"
@@ -449,7 +448,7 @@ export default function CRMClientDetail({
                 id="submit-note-btn"
               >
                 <Plus className="h-3 w-3" />
-                Añadir nota
+                Add note
               </button>
             </div>
           </form>
@@ -470,7 +469,7 @@ export default function CRMClientDetail({
                     <button
                       onClick={() => handleDeleteNote(note.id)}
                       className="p-0.5 rounded hover:bg-indigo-100/70 text-slate-400 hover:text-rose-600 opacity-0 group-hover:opacity-100 transition-all"
-                      title="Eliminar nota"
+                      title="Delete note"
                       id={`delete-note-${note.id}`}
                     >
                       <Trash2 className="h-3 w-3" />
@@ -483,7 +482,7 @@ export default function CRMClientDetail({
               ))
             ) : (
               <div className="text-center py-6 text-[11px] text-slate-400 border border-dashed rounded-xl bg-slate-50/30" id="empty-notes-placeholder">
-                No hay notas registradas. Registra llamadas, visitas o acuerdos para tener una historia detallada del cliente.
+                No registered notes. Log calls, visits, or agreements to build a rich historical timeline.
               </div>
             )}
           </div>

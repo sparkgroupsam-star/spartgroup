@@ -27,7 +27,7 @@ export default function CRMDashboard({ clients, onClientClick }: CRMDashboardPro
     const marketingCount = clients.filter(c => c.category === "event_marketing").length;
     
     // Active pipeline count (not Won or Lost)
-    const activeClients = clients.filter(c => c.stage !== "Ganado" && c.stage !== "Perdido").length;
+    const activeClients = clients.filter(c => c.stage !== "Won" && c.stage !== "Lost").length;
 
     // Compile list of upcoming pending tasks with client info attached
     const upcomingTasks: { task: ClientTask; client: CRMClient }[] = [];
@@ -60,19 +60,19 @@ export default function CRMDashboard({ clients, onClientClick }: CRMDashboardPro
   // Stage distribution data for Recharts Bar/Pie Charts
   const stageChartData = useMemo(() => {
     const counts = {
-      Prospecto: 0,
-      Contactado: 0,
-      Negociación: 0,
-      Ganado: 0,
-      Perdido: 0
+      Lead: 0,
+      Contacted: 0,
+      Negotiation: 0,
+      Won: 0,
+      Lost: 0
     };
 
     const values = {
-      Prospecto: 0,
-      Contactado: 0,
-      Negociación: 0,
-      Ganado: 0,
-      Perdido: 0
+      Lead: 0,
+      Contacted: 0,
+      Negotiation: 0,
+      Won: 0,
+      Lost: 0
     };
 
     clients.forEach(c => {
@@ -91,11 +91,11 @@ export default function CRMDashboard({ clients, onClientClick }: CRMDashboardPro
 
   // Colors matching our Stage Badges
   const COLORS = {
-    Prospecto: "#38bdf8",   // sky
-    Contactado: "#4f46e5",  // indigo
-    Negociación: "#f59e0b", // amber
-    Ganado: "#10b981",      // emerald
-    Perdido: "#ef4444"       // rose
+    Lead: "#38bdf8",   // sky
+    Contacted: "#4f46e5",  // indigo
+    Negotiation: "#f59e0b", // amber
+    Won: "#10b981",      // emerald
+    Lost: "#ef4444"       // rose
   };
 
   const pieChartData = useMemo(() => {
@@ -115,10 +115,10 @@ export default function CRMDashboard({ clients, onClientClick }: CRMDashboardPro
         {/* Total Clients card */}
         <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl shadow-lg flex items-center justify-between text-white" id="metric-total-clients">
           <div className="space-y-1.5">
-            <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider block">Registros Totales</span>
+            <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider block">Total Records</span>
             <span className="text-3xl font-black text-white leading-none">{stats.totalClients}</span>
             <span className="text-[10px] text-slate-400 block font-bold">
-              {stats.activeClients} seguimientos activos
+              {stats.activeClients} active follow-ups
             </span>
           </div>
           <div className="h-12 w-12 bg-slate-800 border border-slate-700 text-indigo-400 rounded-xl flex items-center justify-center shadow-sm">
@@ -131,7 +131,7 @@ export default function CRMDashboard({ clients, onClientClick }: CRMDashboardPro
           <div className="space-y-1.5">
             <span className="text-[10px] text-indigo-100 font-extrabold uppercase tracking-wider block">Event Tracker</span>
             <span className="text-3xl font-black text-white leading-none">{stats.trackerCount}</span>
-            <span className="text-[10px] text-indigo-200 block font-bold">Eventos bajo control</span>
+            <span className="text-[10px] text-indigo-200 block font-bold">Events under control</span>
           </div>
           <div className="h-12 w-12 bg-indigo-700/50 border border-indigo-500/50 text-white rounded-xl flex items-center justify-center shadow-sm">
             <Activity className="h-5 w-5" />
@@ -141,9 +141,9 @@ export default function CRMDashboard({ clients, onClientClick }: CRMDashboardPro
         {/* Pending Clients card */}
         <div className="p-5 bg-emerald-600 border border-emerald-500 rounded-2xl shadow-lg shadow-emerald-600/15 flex items-center justify-between text-white" id="metric-pending-clients">
           <div className="space-y-1.5">
-            <span className="text-[10px] text-emerald-100 font-extrabold uppercase tracking-wider block">Clientes Pendientes</span>
+            <span className="text-[10px] text-emerald-100 font-extrabold uppercase tracking-wider block">Pending Clients</span>
             <span className="text-3xl font-black text-white leading-none">{stats.pendingCount}</span>
-            <span className="text-[10px] text-emerald-200 block font-bold">Esperando confirmación</span>
+            <span className="text-[10px] text-emerald-200 block font-bold">Awaiting confirmation</span>
           </div>
           <div className="h-12 w-12 bg-emerald-700/50 border border-emerald-500/50 text-white rounded-xl flex items-center justify-center shadow-sm">
             <AlertCircle className="h-5 w-5" />
@@ -153,9 +153,9 @@ export default function CRMDashboard({ clients, onClientClick }: CRMDashboardPro
         {/* Daily Planner & Marketing card */}
         <div className="p-5 bg-amber-500 border border-amber-400 rounded-2xl shadow-lg shadow-amber-500/15 flex items-center justify-between text-white" id="metric-planner-marketing">
           <div className="space-y-1.5">
-            <span className="text-[10px] text-amber-50 font-extrabold uppercase tracking-wider block">Planner y Marketing</span>
+            <span className="text-[10px] text-amber-50 font-extrabold uppercase tracking-wider block">Planner and Marketing</span>
             <span className="text-3xl font-black text-white leading-none">{stats.plannerCount + stats.marketingCount}</span>
-            <span className="text-[10px] text-amber-100 block font-bold">{stats.plannerCount} planificados | {stats.marketingCount} de mercadeo</span>
+            <span className="text-[10px] text-amber-100 block font-bold">{stats.plannerCount} planned | {stats.marketingCount} marketing</span>
           </div>
           <div className="h-12 w-12 bg-amber-600/50 border border-amber-400/50 text-white rounded-xl flex items-center justify-center shadow-sm">
             <Calendar className="h-5 w-5" />
@@ -171,11 +171,11 @@ export default function CRMDashboard({ clients, onClientClick }: CRMDashboardPro
           <div className="flex items-center justify-between" id="chart-head-val">
             <div>
               <h4 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-                <Briefcase className="h-4 w-4 text-indigo-500" /> Cantidad de Eventos por Etapa
+                <Briefcase className="h-4 w-4 text-indigo-500" /> Number of Events by Stage
               </h4>
-              <p className="text-[11px] text-slate-400 font-medium">Distribución real de registros en el embudo de control</p>
+              <p className="text-[11px] text-slate-400 font-medium">Real distribution of records in the pipeline</p>
             </div>
-            <span className="px-2 py-0.5 bg-slate-50 border rounded-lg text-[10px] font-mono text-slate-400 font-bold">Unidades</span>
+            <span className="px-2 py-0.5 bg-slate-50 border rounded-lg text-[10px] font-mono text-slate-400 font-bold">Units</span>
           </div>
 
           <div className="h-64" id="bar-chart-container">
@@ -190,7 +190,7 @@ export default function CRMDashboard({ clients, onClientClick }: CRMDashboardPro
                     contentStyle={{ background: "#ffffff", border: "1px solid #cbd5e1", borderRadius: "12px", fontSize: "11px", fontWeight: "bold" }}
                     labelStyle={{ color: "#0f172a" }}
                     itemStyle={{ color: "#4f46e5" }}
-                    formatter={(value) => [value, "Cantidad"]}
+                    formatter={(value) => [value, "Count"]}
                   />
                   <Bar dataKey="Cantidad" radius={[8, 8, 0, 0]} fill="#6366f1">
                     {stageChartData.map((entry, index) => (
@@ -201,7 +201,7 @@ export default function CRMDashboard({ clients, onClientClick }: CRMDashboardPro
               </ResponsiveContainer>
             ) : (
               <div className="h-full flex items-center justify-center text-xs text-slate-400">
-                Registra clientes para ver este gráfico.
+                Register clients to see this chart.
               </div>
             )}
           </div>
@@ -211,9 +211,9 @@ export default function CRMDashboard({ clients, onClientClick }: CRMDashboardPro
         <div className="bg-white p-5 border border-slate-200 rounded-2xl shadow-sm space-y-4" id="distribution-pie-chart-panel">
           <div>
             <h4 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-              <Users className="h-4 w-4 text-indigo-500" /> Distribución de Contactos
+              <Users className="h-4 w-4 text-indigo-500" /> Contact Distribution
             </h4>
-            <p className="text-[11px] text-slate-400 font-medium">División por estados de tu embudo de ventas</p>
+            <p className="text-[11px] text-slate-400 font-medium">Breakdown by sales pipeline stages</p>
           </div>
 
           <div className="h-48 relative" id="pie-chart-container">
@@ -242,7 +242,7 @@ export default function CRMDashboard({ clients, onClientClick }: CRMDashboardPro
               </ResponsiveContainer>
             ) : (
               <div className="h-full flex items-center justify-center text-xs text-slate-400">
-                No hay datos disponibles.
+                No data available.
               </div>
             )}
             
@@ -250,7 +250,7 @@ export default function CRMDashboard({ clients, onClientClick }: CRMDashboardPro
             {clients.length > 0 && (
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-2">
                 <span className="text-xl font-black text-slate-800">{clients.length}</span>
-                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Clientes</span>
+                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Clients</span>
               </div>
             )}
           </div>
@@ -271,9 +271,9 @@ export default function CRMDashboard({ clients, onClientClick }: CRMDashboardPro
       <div className="bg-white p-5 border border-slate-200 rounded-2xl shadow-sm space-y-4" id="agenda-reminders-panel">
         <div>
           <h4 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-            <Activity className="h-4 w-4 text-indigo-500" /> Próximas Tareas y Agenda de Seguimiento
+            <Activity className="h-4 w-4 text-indigo-500" /> Upcoming Tasks and Follow-up Agenda
           </h4>
-          <p className="text-[11px] text-slate-400 font-medium">Llamadas y tareas de clientes ordenadas por vencimiento</p>
+          <p className="text-[11px] text-slate-400 font-medium">Client calls and tasks sorted by due date</p>
         </div>
 
         <div className="divide-y divide-slate-100" id="agenda-tasks-list">
@@ -296,7 +296,7 @@ export default function CRMDashboard({ clients, onClientClick }: CRMDashboardPro
                         {task.title}
                       </span>
                       <span className="text-[10px] text-slate-500 font-semibold block mt-0.5">
-                        Cliente: <span className="text-slate-800 font-extrabold">{client.name}</span> {client.company ? `(${client.company})` : ""}
+                        Client: <span className="text-slate-800 font-extrabold">{client.name}</span> {client.company ? `(${client.company})` : ""}
                       </span>
                     </div>
                   </div>
@@ -307,8 +307,8 @@ export default function CRMDashboard({ clients, onClientClick }: CRMDashboardPro
                         ? "bg-rose-50 text-rose-700 border-rose-200 font-black animate-pulse" 
                         : "bg-slate-100 text-slate-600 border-slate-200"
                     }`} id={`task-due-badge-${task.id}`}>
-                      {isOverdue ? "⚠️ Vencido: " : "⏰ Vence: "}
-                      {new Date(task.dueDate + "T00:00:00").toLocaleDateString("es-ES", { day: "numeric", month: "short" })}
+                      {isOverdue ? "⚠️ Overdue: " : "⏰ Due: "}
+                      {new Date(task.dueDate + "T00:00:00").toLocaleDateString("en-US", { day: "numeric", month: "short" })}
                     </span>
                     <ArrowRight className="h-4 w-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
                   </div>
@@ -318,8 +318,8 @@ export default function CRMDashboard({ clients, onClientClick }: CRMDashboardPro
           ) : (
             <div className="py-8 text-center text-xs text-slate-400 border border-dashed rounded-xl bg-slate-50/30" id="agenda-empty-state">
               <CheckCircle2 className="h-8 w-8 text-emerald-500 mx-auto mb-2 animate-bounce" />
-              <p className="font-bold text-slate-700">¡Agenda de seguimiento vacía!</p>
-              <p className="text-[11px] text-slate-400 mt-0.5">Ve al detalle de cualquier cliente y añade una tarea para programar una alerta.</p>
+              <p className="font-bold text-slate-700">Follow-up agenda is empty!</p>
+              <p className="text-[11px] text-slate-400 mt-0.5">Go to any client's details and add a task to schedule an alert.</p>
             </div>
           )}
         </div>

@@ -15,11 +15,11 @@ interface CRMKanbanViewProps {
 }
 
 const STAGES: CRMClient["stage"][] = [
-  "Prospecto",
-  "Contactado",
-  "Negociación",
-  "Ganado",
-  "Perdido"
+  "Lead",
+  "Contacted",
+  "Negotiation",
+  "Won",
+  "Lost"
 ];
 
 export default function CRMKanbanView({ 
@@ -57,29 +57,29 @@ export default function CRMKanbanView({
             <span className="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg">
               <Briefcase className="h-4 w-4" />
             </span>
-            Embudo de Ventas Interactivo
+            Interactive Sales Funnel
           </h3>
           <p className="text-xs text-slate-500 mt-1" id="kanban-panel-subtitle">
-            Arrastra las tarjetas o usa las flechas para mover a tus clientes entre etapas. Haz clic en una tarjeta para ver o agregar notas.
+            Drag cards or use arrows to move clients between stages. Click a card to view or add notes.
           </p>
         </div>
         
         {/* Pipeline values summary */}
         <div className="flex gap-4 text-xs shrink-0" id="kanban-pipeline-sums">
           <div className="p-2.5 bg-indigo-50/50 border border-indigo-100 rounded-xl" id="pipeline-total-sum">
-            <span className="text-[10px] text-slate-400 block font-bold uppercase tracking-wider">Total en Proceso</span>
+            <span className="text-[10px] text-slate-400 block font-bold uppercase tracking-wider">Total in Progress</span>
             <span className="text-sm font-black text-indigo-700">
               {clients
-                .filter(c => c.stage !== "Ganado" && c.stage !== "Perdido")
+                .filter(c => c.stage !== "Won" && c.stage !== "Lost")
                 .reduce((acc, c) => acc + (c.value || 0), 0)
                 .toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })}
             </span>
           </div>
           <div className="p-2.5 bg-emerald-50/50 border border-emerald-100 rounded-xl" id="pipeline-won-sum">
-            <span className="text-[10px] text-slate-400 block font-bold uppercase tracking-wider">Cerrado Ganado</span>
+            <span className="text-[10px] text-slate-400 block font-bold uppercase tracking-wider">Closed Won</span>
             <span className="text-sm font-black text-emerald-700">
               {clients
-                .filter(c => c.stage === "Ganado")
+                .filter(c => c.stage === "Won")
                 .reduce((acc, c) => acc + (c.value || 0), 0)
                 .toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })}
             </span>
@@ -102,35 +102,35 @@ export default function CRMKanbanView({
               valueText: "text-slate-500"
             };
 
-            if (stage === "Prospecto") {
+            if (stage === "Lead") {
               laneColors = {
                 topBorder: "border-t-sky-500",
                 headerBg: "bg-sky-50/60 text-sky-800 border-sky-100",
                 countBadge: "bg-sky-100/80 text-sky-700",
                 valueText: "text-sky-600"
               };
-            } else if (stage === "Contactado") {
+            } else if (stage === "Contacted") {
               laneColors = {
                 topBorder: "border-t-indigo-500",
                 headerBg: "bg-indigo-50/60 text-indigo-800 border-indigo-100",
                 countBadge: "bg-indigo-100/80 text-indigo-700",
                 valueText: "text-indigo-600"
               };
-            } else if (stage === "Negociación") {
+            } else if (stage === "Negotiation") {
               laneColors = {
                 topBorder: "border-t-amber-500",
                 headerBg: "bg-amber-50/60 text-amber-800 border-amber-100",
                 countBadge: "bg-amber-100/80 text-amber-700",
                 valueText: "text-amber-600"
               };
-            } else if (stage === "Ganado") {
+            } else if (stage === "Won") {
               laneColors = {
                 topBorder: "border-t-emerald-500",
                 headerBg: "bg-emerald-50/60 text-emerald-800 border-emerald-100",
                 countBadge: "bg-emerald-100/80 text-emerald-700",
                 valueText: "text-emerald-600"
               };
-            } else if (stage === "Perdido") {
+            } else if (stage === "Lost") {
               laneColors = {
                 topBorder: "border-t-rose-400",
                 headerBg: "bg-rose-50/50 text-rose-800 border-rose-100",
@@ -149,7 +149,7 @@ export default function CRMKanbanView({
               >
                 {/* Lane Header */}
                 <div 
-                  className={`p-3.5 rounded-t-2xl border-t-4 ${laneColors.topBorder} ${laneColors.headerBg} border-b flex flex-col gap-1.5`}
+                   className={`p-3.5 rounded-t-2xl border-t-4 ${laneColors.topBorder} ${laneColors.headerBg} border-b flex flex-col gap-1.5`}
                   id={`kanban-lane-header-${stage}`}
                 >
                   <div className="flex items-center justify-between" id={`lane-info-${stage}`}>
@@ -161,7 +161,7 @@ export default function CRMKanbanView({
                   
                   {/* Total financial value of the stage */}
                   <div className="flex items-center justify-between text-[10px] font-bold" id={`lane-finance-${stage}`}>
-                    <span className="text-slate-400 uppercase tracking-wider">Valor total</span>
+                    <span className="text-slate-400 uppercase tracking-wider">Total Value</span>
                     <span className={`font-black ${laneColors.valueText}`}>
                       {totalStageValue.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })}
                     </span>
@@ -214,12 +214,12 @@ export default function CRMKanbanView({
                           <div className="flex items-center justify-between border-t border-slate-100 pt-2.5 text-[10px] text-slate-400 font-bold" id={`card-footer-${client.id}`}>
                             <div className="flex items-center gap-2" id={`stats-${client.id}`}>
                               {client.notes && client.notes.length > 0 && (
-                                <span className="flex items-center gap-1 bg-slate-50 border rounded p-1" title="Notas registradas">
+                                <span className="flex items-center gap-1 bg-slate-50 border rounded p-1" title="Registered notes">
                                   📝 {client.notes.length}
                                 </span>
                               )}
                               {pendingTasks > 0 && (
-                                <span className="flex items-center gap-0.5 bg-amber-50 border border-amber-100 rounded p-1 text-amber-700" title="Tareas pendientes">
+                                <span className="flex items-center gap-0.5 bg-amber-50 border border-amber-100 rounded p-1 text-amber-700" title="Pending tasks">
                                   ⏰ {pendingTasks}
                                 </span>
                               )}
@@ -231,7 +231,7 @@ export default function CRMKanbanView({
                                 <button
                                   onClick={() => onEditClientClick(client)}
                                   className="p-1 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 rounded-lg text-slate-500 hover:text-indigo-600 transition-all"
-                                  title="Editar cliente"
+                                  title="Edit client"
                                   id={`edit-card-${client.id}`}
                                 >
                                   <FileEdit className="h-3 w-3" />
@@ -240,12 +240,12 @@ export default function CRMKanbanView({
                               {onDeleteClient && (
                                 <button
                                   onClick={() => {
-                                    if (window.confirm(`¿Estás seguro de que deseas eliminar a ${client.name}?`)) {
+                                    if (window.confirm(`Are you sure you want to delete ${client.name}?`)) {
                                       onDeleteClient(client.id);
                                     }
                                   }}
                                   className="p-1 border border-slate-200 hover:border-rose-400 hover:bg-rose-50 rounded-lg text-slate-500 hover:text-rose-600 transition-all"
-                                  title="Eliminar cliente"
+                                  title="Delete client"
                                   id={`delete-card-${client.id}`}
                                 >
                                   <Trash2 className="h-3 w-3" />
@@ -255,7 +255,7 @@ export default function CRMKanbanView({
                                 <button
                                   onClick={() => onUpdateClientStage(client.id, STAGES[STAGES.indexOf(stage) - 1])}
                                   className="p-1 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 rounded-lg text-slate-400 hover:text-indigo-600 transition-all"
-                                  title="Mover a etapa anterior"
+                                  title="Move to previous stage"
                                   id={`shift-prev-${client.id}`}
                                 >
                                   <ArrowLeft className="h-3 w-3" />
@@ -265,7 +265,7 @@ export default function CRMKanbanView({
                                 <button
                                   onClick={() => onUpdateClientStage(client.id, STAGES[STAGES.indexOf(stage) + 1])}
                                   className="p-1 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 rounded-lg text-slate-400 hover:text-indigo-600 transition-all"
-                                  title="Mover a etapa siguiente"
+                                  title="Move to next stage"
                                   id={`shift-next-${client.id}`}
                                 >
                                   <ArrowRight className="h-3 w-3" />
@@ -278,7 +278,7 @@ export default function CRMKanbanView({
                     })
                   ) : (
                     <div className="py-12 text-center text-xs text-slate-400 border border-dashed border-slate-200 bg-white/40 rounded-xl" id={`empty-stage-placeholder-${stage}`}>
-                      Sin clientes en esta etapa
+                      No clients in this stage
                     </div>
                   )}
                 </div>

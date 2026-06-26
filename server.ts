@@ -33,13 +33,13 @@ async function startServer() {
 
       if (!ai) {
         return res.status(400).json({
-          error: "API Key de Gemini no configurada",
-          message: "Para poder chatear con la IA sobre tus datos, por favor configura la variable GEMINI_API_KEY en la configuración de la aplicación (panel de Secrets en AI Studio).",
+          error: "Gemini API Key not configured",
+          message: "To chat with the AI about your data, please configure the GEMINI_API_KEY variable in the application settings (Secrets panel in AI Studio).",
         });
       }
 
       if (!messages || !Array.isArray(messages)) {
-        return res.status(400).json({ error: "Parámetros inválidos: se requiere el historial de 'messages'." });
+        return res.status(400).json({ error: "Invalid parameters: 'messages' history is required." });
       }
 
       // We slice rows to top 150 to stay well within typical token limits for gemini-3.5-flash and keep execution snappy
@@ -48,21 +48,21 @@ async function startServer() {
 
       // Construct system instruction with spreadsheet context
       const systemInstruction = `
-Eres un Consultor de Negocios y Científico de Datos experto, especializado en optimizar y sistematizar flujos de trabajo basados en hojas de cálculo (Excel/CSV).
-Tu misión es ayudar al usuario a entender, analizar, optimizar y automatizar la gestión de sus datos.
+You are an expert Business Consultant and Data Scientist, specialized in optimizing and systematizing spreadsheet-based workflows (Excel/CSV).
+Your mission is to help the user understand, analyze, optimize, and automate their data management.
 
-DATOS ACTUALES DE LA HOJA DE CÁLCULO:
-- Nombre de la hoja activa: "${sheetName || "Sin nombre"}"
-- Columnas disponibles: ${JSON.stringify(columnsSubset)}
-- Muestra de Filas (primeras ${rowsSubset.length} filas):
+CURRENT SPREADSHEET DATA:
+- Active sheet name: "${sheetName || "Unnamed"}"
+- Available columns: ${JSON.stringify(columnsSubset)}
+- Rows Sample (first ${rowsSubset.length} rows):
 ${JSON.stringify(rowsSubset, null, 2)}
 
-INSTRUCCIONES DE RESPUESTA:
-1. Responde SIEMPRE en español, con un tono profesional, claro, analítico y constructivo.
-2. Si el usuario te hace preguntas sobre estos datos, analiza la información para proporcionarle cálculos exactos, resúmenes de conteo, sumas, promedios, valores mínimos/máximos o tendencias relevantes.
-3. Si el usuario te pide optimizar o sistematizar, sugiérele mejoras de estructura de datos, ideas de automatización de procesos, columnas útiles que podría agregar (por ejemplo: columna de prioridad, estado, fecha límite, responsable) o flujos de trabajo prácticos.
-4. Usa formato Markdown con negritas, listas y tablas para que tus respuestas sean sumamente legibles, profesionales y estéticas. Evita bloques de texto gigantes e ilegibles.
-5. Si no hay datos cargados, explícale de forma amable cómo puede importar su propio archivo Excel o seleccionar una de las plantillas de negocio disponibles en la interfaz para comenzar.
+RESPONSE INSTRUCTIONS:
+1. ALWAYS respond in English, in a professional, clear, analytical, and constructive tone.
+2. If the user asks questions about this data, analyze the information to provide them with exact calculations, count summaries, sums, averages, min/max values, or relevant trends.
+3. If the user asks you to optimize or systematize, suggest data structure improvements, process automation ideas, useful columns they could add (e.g., priority, status, deadline, owner), or practical workflows.
+4. Use Markdown formatting with bold text, lists, and tables to make your responses highly legible, professional, and aesthetic. Avoid giant, illegible blocks of text.
+5. If there is no data loaded, kindly explain how they can import their own Excel file or select one of the available business templates in the interface to get started.
       `.trim();
 
       // Convert messages to Gemini SDK contents format
@@ -73,7 +73,7 @@ INSTRUCCIONES DE RESPUESTA:
       }));
 
       // Get last user message text
-      const lastMessage = messages[messages.length - 1]?.text || "Hola";
+      const lastMessage = messages[messages.length - 1]?.text || "Hello";
 
       // Call Gemini API
       const response = await ai.models.generateContent({
@@ -85,13 +85,13 @@ INSTRUCCIONES DE RESPUESTA:
         },
       });
 
-      const responseText = response.text || "No obtuve respuesta de la Inteligencia Artificial.";
+      const responseText = response.text || "I did not receive a response from the Artificial Intelligence.";
 
       res.json({ text: responseText });
     } catch (error: any) {
-      console.error("Error en endpoint /api/chat:", error);
+      console.error("Error in endpoint /api/chat:", error);
       res.status(500).json({
-        error: "Error interno del servidor al procesar la solicitud con Gemini.",
+        error: "Internal server error while processing the request with Gemini.",
         details: error.message || String(error),
       });
     }
@@ -113,7 +113,7 @@ INSTRUCCIONES DE RESPUESTA:
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`[Server] Corriendo en puerto ${PORT} en modo ${process.env.NODE_ENV || "development"}`);
+    console.log(`[Server] Running on port ${PORT} in ${process.env.NODE_ENV || "development"} mode`);
   });
 }
 

@@ -56,7 +56,7 @@ export default function CRMClientList({
   onShowToast
 }: CRMClientListProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [stageFilter, setStageFilter] = useState<string>("Todos");
+  const [stageFilter, setStageFilter] = useState<string>("All");
   const [sortBy, setSortBy] = useState<"name" | "value" | "createdAt" | "eventDate">("eventDate");
   const [sortOrder, setSortOrder] = useState<"desc" | "asc">("asc");
   
@@ -64,7 +64,7 @@ export default function CRMClientList({
   const [activeCategory, setActiveCategory] = useState<"event_tracker" | "clientes_pendientes" | "daily_event_planner" | "event_marketing">("event_tracker");
   
   // Past vs Future Filter (Specifically for Event Tracker)
-  const [eventTimeFilter, setEventTimeFilter] = useState<"todos" | "futuros" | "pasados">("todos");
+  const [eventTimeFilter, setEventTimeFilter] = useState<"all" | "future" | "past">("all");
 
   // Helper to check if event date is in the past
   const isEventPast = (client: CRMClient): boolean => {
@@ -113,15 +113,15 @@ export default function CRMClientList({
         if (!matchesSearch) return false;
 
         // 3. Stage filter
-        if (stageFilter !== "Todos") {
+        if (stageFilter !== "All") {
           if (client.stage !== stageFilter) return false;
         }
 
         // 4. Past vs Future Event automatic filter (Only for event tracker)
-        if (activeCategory === "event_tracker" && eventTimeFilter !== "todos") {
+        if (activeCategory === "event_tracker" && eventTimeFilter !== "all") {
           const past = isEventPast(client);
-          if (eventTimeFilter === "pasados" && !past) return false;
-          if (eventTimeFilter === "futuros" && past) return false;
+          if (eventTimeFilter === "past" && !past) return false;
+          if (eventTimeFilter === "future" && past) return false;
         }
 
         return true;
@@ -165,7 +165,7 @@ export default function CRMClientList({
     });
 
     sorted.forEach(c => {
-      const d = c.eventDate || "Sin Fecha Definida";
+      const d = c.eventDate || "No Date Defined";
       if (!groups[d]) groups[d] = [];
       groups[d].push(c);
     });
@@ -175,15 +175,15 @@ export default function CRMClientList({
   // Stage Badge color helper
   const getStageBadgeClass = (stage: CRMClient["stage"]) => {
     switch (stage) {
-      case "Prospecto":
+      case "Lead":
         return "bg-sky-50 text-sky-700 border-sky-150";
-      case "Contactado":
+      case "Contacted":
         return "bg-indigo-50 text-indigo-700 border-indigo-150";
-      case "Negociación":
+      case "Negotiation":
         return "bg-amber-50 text-amber-700 border-amber-150";
-      case "Ganado":
+      case "Won":
         return "bg-emerald-50 text-emerald-700 border-emerald-150";
-      case "Perdido":
+      case "Lost":
         return "bg-slate-150 text-slate-600 border-slate-200";
     }
   };
@@ -194,73 +194,73 @@ export default function CRMClientList({
 
     // Filter into sheets based on category
     const trackerRows = clients.filter(c => !c.category || c.category === "event_tracker").map(c => ({
-      Cliente: c.name,
-      Contacto: `${c.email || ""} ${c.phone ? "(" + c.phone + ")" : ""}`.trim(),
-      Dirección: c.address || "",
-      Locación: c.location || "",
-      Fecha: c.eventDate || "",
-      "Horas Contratadas": c.eventHours || "",
+      Client: c.name,
+      Contact: `${c.email || ""} ${c.phone ? "(" + c.phone + ")" : ""}`.trim(),
+      Address: c.address || "",
+      Location: c.location || "",
+      Date: c.eventDate || "",
+      "Contracted Hours": c.eventHours || "",
       "Start Time": c.startTime || "",
       "End Time": c.endTime || "",
       Robot: c.robot || "",
       "DJ Needed": c.djNeeded || "",
       Helper: c.helper || "",
       "Type Event": c.eventType || "",
-      Equipement: c.equipment || ""
+      Equipment: c.equipment || ""
     }));
 
     const pendientesRows = clients.filter(c => c.category === "clientes_pendientes").map(c => ({
-      Cliente: c.name,
+      Client: c.name,
       "Contract Status": c.contractStatus || "",
       "Invoice Send": c.invoiceSent || "",
-      Teléfono: c.phone || "",
+      Phone: c.phone || "",
       Email: c.email || "",
-      Información: c.info || ""
+      Info: c.info || ""
     }));
 
     const plannerRows = clients.filter(c => c.category === "daily_event_planner").map(c => ({
-      Fecha: c.eventDate || "",
-      Evento: c.name,
-      Ayudante: c.helper || "",
-      Estado: c.contractStatus || "",
-      Notas: c.info || ""
+      Date: c.eventDate || "",
+      Event: c.name,
+      Helper: c.helper || "",
+      Status: c.contractStatus || "",
+      Notes: c.info || ""
     }));
 
     const marketingRows = clients.filter(c => c.category === "event_marketing").map(c => ({
-      Cliente: c.name,
-      Locación: c.location || "",
-      Fecha: c.eventDate || "",
-      Tipo: c.eventType || "",
+      Client: c.name,
+      Location: c.location || "",
+      Date: c.eventDate || "",
+      Type: c.eventType || "",
       Staff: c.marketingStaff || "",
-      Valor: c.marketingValue || ""
+      Value: c.marketingValue || ""
     }));
 
-    const workbook = XLSX.book_new();
+    const workbook = XLSX.utils.book_new();
 
     if (trackerRows.length > 0) {
       const ws = XLSX.utils.json_to_sheet(trackerRows);
-      XLSX.book_append_sheet(workbook, ws, "Event Tracker");
+      XLSX.utils.book_append_sheet(workbook, ws, "Event Tracker");
     }
     if (pendientesRows.length > 0) {
       const ws = XLSX.utils.json_to_sheet(pendientesRows);
-      XLSX.book_append_sheet(workbook, ws, "Clientes Pendientes");
+      XLSX.utils.book_append_sheet(workbook, ws, "Pending Clients");
     }
     if (plannerRows.length > 0) {
       const ws = XLSX.utils.json_to_sheet(plannerRows);
-      XLSX.book_append_sheet(workbook, ws, "Daily Event Planner");
+      XLSX.utils.book_append_sheet(workbook, ws, "Daily Event Planner");
     }
     if (marketingRows.length > 0) {
       const ws = XLSX.utils.json_to_sheet(marketingRows);
-      XLSX.book_append_sheet(workbook, ws, "Event Marketing");
+      XLSX.utils.book_append_sheet(workbook, ws, "Event Marketing");
     }
 
     // Default sheet if all are empty
     if (workbook.SheetNames.length === 0) {
-      const ws = XLSX.utils.json_to_sheet([{ Mensaje: "Base de datos vacía" }]);
-      XLSX.book_append_sheet(workbook, ws, "CRM Clientes");
+      const ws = XLSX.utils.json_to_sheet([{ Message: "Empty database" }]);
+      XLSX.utils.book_append_sheet(workbook, ws, "CRM Clients");
     }
 
-    XLSX.writeFile(workbook, `CRM_Clientes_Completo_${new Date().toISOString().split("T")[0]}.xlsx`);
+    XLSX.writeFile(workbook, `CRM_Clients_Complete_${new Date().toISOString().split("T")[0]}.xlsx`);
   };
 
   // Comprehensive 4-tab Excel Import trigger
@@ -339,7 +339,7 @@ export default function CRMClientList({
                 eventType: eventTypeVal ? String(eventTypeVal).trim() : "",
                 equipment: equipmentVal ? String(equipmentVal).trim() : "",
                 category: "event_tracker" as const,
-                stage: "Contactado" as const,
+                stage: "Contacted" as const,
                 value: 0
               };
             }).filter(item => item.name);
@@ -369,11 +369,11 @@ export default function CRMClientList({
                 name: nameVal ? String(nameVal).trim() : "",
                 email: emailVal ? String(emailVal).trim() : "",
                 phone: phoneVal ? String(phoneVal).trim() : "",
-                contractStatus: contractStatusVal ? String(contractStatusVal).trim() : "Pendiente",
+                contractStatus: contractStatusVal ? String(contractStatusVal).trim() : "Pending",
                 invoiceSent: invoiceSentVal ? String(invoiceSentVal).trim() : "No",
                 info: infoVal ? String(infoVal).trim() : "",
                 category: "clientes_pendientes" as const,
-                stage: "Prospecto" as const,
+                stage: "Lead" as const,
                 value: 0
               };
             }).filter(item => item.name);
@@ -405,11 +405,11 @@ export default function CRMClientList({
                   plannerItems.push({
                     name: colA, // Task Description
                     eventDate: currentDate || "6/25/2026", // Use current parser date
-                    contractStatus: colB || "Pendiente", // e.g. "Done" or "ordered"
+                    contractStatus: colB || "Pending", // e.g. "Done" or "ordered"
                     helper: colC, // assignee
                     info: colD, // notes/materials
                     category: "daily_event_planner" as const,
-                    stage: colB.toLowerCase().includes("done") || colB.toLowerCase().includes("terminado") ? ("Ganado" as const) : ("Prospecto" as const),
+                    stage: colB.toLowerCase().includes("done") || colB.toLowerCase().includes("terminado") ? ("Won" as const) : ("Lead" as const),
                     value: 0
                   });
                 } else if (colA.length > 3) {
@@ -421,7 +421,7 @@ export default function CRMClientList({
                     helper: colC || "",
                     info: colD || "",
                     category: "daily_event_planner" as const,
-                    stage: "Prospecto" as const,
+                    stage: "Lead" as const,
                     value: 0
                   });
                 }
@@ -458,7 +458,7 @@ export default function CRMClientList({
               }
 
               marketingItems.push({
-                name: name || "Evento de Marketing",
+                name: name || "Marketing Event",
                 location: location,
                 eventDate: date,
                 eventType: eventType,
@@ -466,7 +466,7 @@ export default function CRMClientList({
                 marketingValue: valueRaw,
                 value: valueNum,
                 category: "event_marketing" as const,
-                stage: "Prospecto" as const
+                stage: "Lead" as const
               });
             });
             allImportedItems.push(...marketingItems);
@@ -487,11 +487,11 @@ export default function CRMClientList({
             };
 
             return {
-              name: String(getVal(["nombre"]) || getVal(["client"]) || getVal(["name"]) || keys[0] || "Cliente sin nombre").trim(),
+              name: String(getVal(["nombre"]) || getVal(["client"]) || getVal(["name"]) || keys[0] || "Client without name").trim(),
               email: String(getVal(["email"]) || getVal(["correo"]) || "").trim(),
               phone: String(getVal(["telefono"]) || getVal(["phone"]) || "").trim(),
               category: "event_tracker" as const,
-              stage: "Prospecto" as const,
+              stage: "Lead" as const,
               value: 0
             };
           }).filter(item => item.name);
@@ -501,17 +501,17 @@ export default function CRMClientList({
         if (allImportedItems.length > 0) {
           onImportExcel(allImportedItems);
           if (onShowToast) {
-            onShowToast(`¡Importación de 4 pestañas completada con éxito! Se cargaron ${allImportedItems.length} registros en total.`, "success");
+            onShowToast(`¡4-tab Import completed successfully! A total of ${allImportedItems.length} records were loaded.`, "success");
           }
         } else {
           if (onShowToast) {
-            onShowToast("No se encontraron registros válidos en las pestañas. Verifica el archivo Excel.", "error");
+            onShowToast("No valid records found in the sheets. Please verify your Excel file.", "error");
           }
         }
       } catch (err) {
-        console.error("Error leyendo archivo de Excel:", err);
+        console.error("Error reading Excel file:", err);
         if (onShowToast) {
-          onShowToast("Ocurrió un error al procesar el archivo Excel. Asegúrate de que sea un formato válido.", "error");
+          onShowToast("An error occurred while processing the Excel file. Make sure it is a valid format.", "error");
         }
       }
     };
@@ -536,7 +536,7 @@ export default function CRMClientList({
         <button
           onClick={() => {
             setActiveCategory("event_tracker");
-            setStageFilter("Todos");
+            setStageFilter("All");
           }}
           className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
             activeCategory === "event_tracker"
@@ -551,7 +551,7 @@ export default function CRMClientList({
         <button
           onClick={() => {
             setActiveCategory("clientes_pendientes");
-            setStageFilter("Todos");
+            setStageFilter("All");
           }}
           className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
             activeCategory === "clientes_pendientes"
@@ -561,12 +561,12 @@ export default function CRMClientList({
           id="category-tab-pendientes"
         >
           <Clock className="h-4 w-4 shrink-0" />
-          <span>⏳ Clientes Pendientes</span>
+          <span>⏳ Pending Clients</span>
         </button>
         <button
           onClick={() => {
             setActiveCategory("daily_event_planner");
-            setStageFilter("Todos");
+            setStageFilter("All");
           }}
           className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
             activeCategory === "daily_event_planner"
@@ -581,7 +581,7 @@ export default function CRMClientList({
         <button
           onClick={() => {
             setActiveCategory("event_marketing");
-            setStageFilter("Todos");
+            setStageFilter("All");
           }}
           className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
             activeCategory === "event_marketing"
@@ -607,7 +607,7 @@ export default function CRMClientList({
             </div>
             <input
               type="text"
-              placeholder={`Buscar en ${activeCategory.replace("_", " ")}...`}
+              placeholder={`Search in ${activeCategory.replace("_", " ")}...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs md:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-slate-50/50 hover:bg-white transition-all"
@@ -619,34 +619,34 @@ export default function CRMClientList({
           {activeCategory === "event_tracker" && (
             <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200" id="time-filter-pills">
               <button
-                onClick={() => setEventTimeFilter("todos")}
+                onClick={() => setEventTimeFilter("all")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  eventTimeFilter === "todos"
+                  eventTimeFilter === "all"
                     ? "bg-white text-slate-950 shadow-sm"
                     : "text-slate-500 hover:text-slate-800"
                 }`}
               >
-                Todos
+                All
               </button>
               <button
-                onClick={() => setEventTimeFilter("futuros")}
+                onClick={() => setEventTimeFilter("future")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
-                  eventTimeFilter === "futuros"
+                  eventTimeFilter === "future"
                     ? "bg-emerald-50 text-emerald-700 shadow-sm border border-emerald-100"
                     : "text-slate-500 hover:text-slate-800"
                 }`}
               >
-                🔮 Futuros
+                🔮 Future
               </button>
               <button
-                onClick={() => setEventTimeFilter("pasados")}
+                onClick={() => setEventTimeFilter("past")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
-                  eventTimeFilter === "pasados"
+                  eventTimeFilter === "past"
                     ? "bg-slate-200 text-slate-700 shadow-sm"
                     : "text-slate-500 hover:text-slate-800"
                 }`}
               >
-                ⏳ Pasados
+                ⏳ Past
               </button>
             </div>
           )}
@@ -655,7 +655,7 @@ export default function CRMClientList({
           {activeCategory !== "daily_event_planner" && (
             <div className="flex items-center gap-2 shrink-0" id="filter-dropdown-wrapper">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                <Filter className="h-3.5 w-3.5" /> Filtrar:
+                <Filter className="h-3.5 w-3.5" /> Filter:
               </span>
               <select
                 value={stageFilter}
@@ -663,12 +663,12 @@ export default function CRMClientList({
                 className="px-3 py-2 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500"
                 id="stage-filter-select"
               >
-                <option value="Todos">📂 Todas las Etapas</option>
-                <option value="Prospecto">🆕 Prospectos</option>
-                <option value="Contactado">📞 Contactados</option>
-                <option value="Negociación">🤝 En Negociación</option>
-                <option value="Ganado">🎉 Ganados</option>
-                <option value="Perdido">❌ Perdidos</option>
+                <option value="All">📂 All Stages</option>
+                <option value="Lead">🆕 Leads</option>
+                <option value="Contacted">📞 Contacted</option>
+                <option value="Negotiation">🤝 Negotiation</option>
+                <option value="Won">🎉 Won</option>
+                <option value="Lost">❌ Lost</option>
               </select>
             </div>
           )}
@@ -680,7 +680,7 @@ export default function CRMClientList({
           {/* Excel Import button */}
           <label className="px-3 py-2 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:text-indigo-600 cursor-pointer flex items-center gap-1.5 transition-all shadow-sm">
             <Download className="h-3.5 w-3.5 text-slate-400 group-hover:text-indigo-500" />
-            <span>Importar de Excel</span>
+            <span>Import Excel</span>
             <input 
               type="file" 
               accept=".xlsx, .xls, .csv" 
@@ -696,10 +696,10 @@ export default function CRMClientList({
             disabled={clients.length === 0}
             className="px-3 py-2 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:text-indigo-600 transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-40"
             id="excel-export-btn"
-            title="Exportar base de datos a un archivo Excel (.xlsx)"
+            title="Export database to an Excel file (.xlsx)"
           >
             <Upload className="h-3.5 w-3.5 text-slate-400" />
-            Exportar Excel
+            Export Excel
           </button>
 
           {/* Clear database button */}
@@ -710,7 +710,7 @@ export default function CRMClientList({
               id="clear-db-btn"
             >
               <Trash2 className="h-3.5 w-3.5 text-rose-500" />
-              Limpiar Base
+              Clear Database
             </button>
           )}
 
@@ -721,7 +721,7 @@ export default function CRMClientList({
             id="add-client-toolbar-btn"
           >
             <Plus className="h-4 w-4" />
-            Agregar Registro
+            Add Record
           </button>
         </div>
       </div>
@@ -744,14 +744,14 @@ export default function CRMClientList({
                       <span className="font-extrabold text-slate-900 tracking-tight text-sm font-mono">{date}</span>
                     </div>
                     <span className="text-[10px] bg-indigo-50 text-indigo-700 border border-indigo-100 px-2.5 py-0.5 rounded-full font-black font-mono">
-                      {items.length} tareas
+                      {items.length} tasks
                     </span>
                   </div>
 
                   {/* Grouped Tasks Checklist */}
                   <div className="p-4 divide-y divide-slate-100">
                     {items.map((item) => {
-                      const isCompleted = item.contractStatus?.toLowerCase() === "done" || item.stage === "Ganado";
+                      const isCompleted = item.contractStatus?.toLowerCase() === "done" || item.stage === "Won";
                       return (
                         <div 
                           key={item.id}
@@ -767,8 +767,8 @@ export default function CRMClientList({
                                 e.stopPropagation();
                                 const updated: CRMClient = {
                                   ...item,
-                                  contractStatus: isCompleted ? "Pendiente" : "Done",
-                                  stage: isCompleted ? "Prospecto" : "Ganado"
+                                  contractStatus: isCompleted ? "Pending" : "Done",
+                                  stage: isCompleted ? "Lead" : "Won"
                                 };
                                 onEditClientClick(updated);
                               }}
@@ -797,7 +797,7 @@ export default function CRMClientList({
                             <span className={`px-2 py-0.5 rounded text-[10px] font-black tracking-wide ${
                               isCompleted ? "bg-emerald-50 text-emerald-700" : "bg-sky-50 text-sky-700"
                             }`}>
-                              {item.contractStatus || "Pendiente"}
+                              {item.contractStatus || "Pending"}
                             </span>
                             <button
                               onClick={(e) => {
@@ -805,19 +805,19 @@ export default function CRMClientList({
                                 onEditClientClick(item);
                               }}
                               className="p-1 border border-slate-150 hover:border-indigo-400 hover:bg-indigo-50 rounded-lg text-slate-400 hover:text-indigo-600 transition-colors bg-white shadow-sm"
-                              title="Editar registro"
+                              title="Edit record"
                             >
                               <FileEdit className="h-3.5 w-3.5" />
                             </button>
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                if (window.confirm(`¿Estás seguro de que deseas eliminar a ${item.name}?`)) {
+                                if (window.confirm(`Are you sure you want to delete ${item.name}?`)) {
                                   onDeleteClient(item.id);
                                 }
                               }}
                               className="p-1 border border-slate-150 hover:border-rose-400 hover:bg-rose-50 rounded-lg text-slate-400 hover:text-rose-600 transition-colors bg-white shadow-sm"
-                              title="Eliminar registro"
+                              title="Delete record"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
                             </button>
@@ -827,7 +827,7 @@ export default function CRMClientList({
                                 onClientClick(item);
                               }}
                               className="p-1 border border-slate-150 hover:border-indigo-400 hover:text-indigo-600 rounded-lg text-slate-400 transition-colors bg-white shadow-sm"
-                              title="Ver detalles"
+                              title="View details"
                             >
                               <ChevronRight className="h-3.5 w-3.5" />
                             </button>
@@ -842,16 +842,14 @@ export default function CRMClientList({
           ) : (
             <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center shadow-sm">
               <CheckSquare className="h-10 w-10 text-slate-300 mx-auto mb-3 animate-pulse" />
-              <h4 className="text-base font-bold text-slate-800">No hay planificador diario cargado</h4>
+              <h4 className="text-base font-bold text-slate-800">No daily planner loaded</h4>
               <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-                Carga un archivo de Excel con la pestaña "Daily Event Planner" para organizar las tareas por fecha.
+                Load an Excel file with the "Daily Event Planner" sheet to organize tasks by date.
               </p>
             </div>
           )}
         </div>
-
       ) : (
-
         /* Render Standard Category Tables (Event Tracker, Clientes Pendientes, Event Marketing) */
         <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm" id="client-table-panel">
           <div className="overflow-x-auto" id="client-table-scroll">
@@ -863,52 +861,52 @@ export default function CRMClientList({
                   {activeCategory === "event_tracker" && (
                     <>
                       <th onClick={() => handleSortToggle("name")} className="p-4 cursor-pointer hover:text-slate-700 hover:bg-slate-100/50 transition-colors min-w-[150px]">
-                        Cliente {sortBy === "name" ? (sortOrder === "asc" ? "▲" : "▼") : ""}
+                        Client {sortBy === "name" ? (sortOrder === "asc" ? "▲" : "▼") : ""}
                       </th>
-                      <th className="p-4 min-w-[160px]">Contacto (Email, Tel)</th>
-                      <th className="p-4 min-w-[150px]">Dirección</th>
-                      <th className="p-4 min-w-[130px]">Locación</th>
+                      <th className="p-4 min-w-[160px]">Contact (Email, Phone)</th>
+                      <th className="p-4 min-w-[150px]">Address</th>
+                      <th className="p-4 min-w-[130px]">Location</th>
                       <th onClick={() => handleSortToggle("eventDate")} className="p-4 cursor-pointer hover:text-slate-700 hover:bg-slate-100/50 transition-colors min-w-[120px]">
-                        Fecha {sortBy === "eventDate" ? (sortOrder === "asc" ? "▲" : "▼") : ""}
+                        Date {sortBy === "eventDate" ? (sortOrder === "asc" ? "▲" : "▼") : ""}
                       </th>
-                      <th className="p-4 min-w-[140px]">Horas Contratadas</th>
+                      <th className="p-4 min-w-[140px]">Contracted Hours</th>
                       <th className="p-4 min-w-[110px]">Start Time</th>
                       <th className="p-4 min-w-[110px]">End Time</th>
                       <th className="p-4 min-w-[110px]">Robot</th>
                       <th className="p-4 min-w-[110px]">DJ Needed</th>
                       <th className="p-4 min-w-[110px]">Helper</th>
-                      <th className="p-4 min-w-[130px]">Type Event</th>
+                      <th className="p-4 min-w-[130px]">Event Type</th>
                       <th className="p-4 min-w-[130px]">Equipment</th>
-                      <th className="p-4 text-right min-w-[80px]">Acción</th>
+                      <th className="p-4 text-right min-w-[80px]">Action</th>
                     </>
                   )}
 
                   {activeCategory === "clientes_pendientes" && (
                     <>
                       <th onClick={() => handleSortToggle("name")} className="p-4 cursor-pointer hover:text-slate-700 hover:bg-slate-100/50 transition-colors">
-                        Cliente {sortBy === "name" ? (sortOrder === "asc" ? "▲" : "▼") : ""}
+                        Client {sortBy === "name" ? (sortOrder === "asc" ? "▲" : "▼") : ""}
                       </th>
-                      <th className="p-4">Contacto</th>
-                      <th className="p-4">Contrato</th>
-                      <th className="p-4">Factura</th>
-                      <th className="p-4">Información</th>
-                      <th className="p-4 text-right">Acción</th>
+                      <th className="p-4">Contact</th>
+                      <th className="p-4">Contract</th>
+                      <th className="p-4">Invoice</th>
+                      <th className="p-4">Info</th>
+                      <th className="p-4 text-right">Action</th>
                     </>
                   )}
 
                   {activeCategory === "event_marketing" && (
                     <>
                       <th onClick={() => handleSortToggle("name")} className="p-4 cursor-pointer hover:text-slate-700 hover:bg-slate-100/50 transition-colors">
-                        Evento / Cliente {sortBy === "name" ? (sortOrder === "asc" ? "▲" : "▼") : ""}
+                        Event / Client {sortBy === "name" ? (sortOrder === "asc" ? "▲" : "▼") : ""}
                       </th>
-                      <th className="p-4">Locación</th>
+                      <th className="p-4">Location</th>
                       <th onClick={() => handleSortToggle("eventDate")} className="p-4 cursor-pointer hover:text-slate-700 hover:bg-slate-100/50 transition-colors">
-                        Fecha {sortBy === "eventDate" ? (sortOrder === "asc" ? "▲" : "▼") : ""}
+                        Date {sortBy === "eventDate" ? (sortOrder === "asc" ? "▲" : "▼") : ""}
                       </th>
-                      <th className="p-4">Tipo de Evento</th>
-                      <th className="p-4">Staff Requerido</th>
-                      <th className="p-4">Valor / Costo</th>
-                      <th className="p-4 text-right">Acción</th>
+                      <th className="p-4">Event Type</th>
+                      <th className="p-4">Staff Required</th>
+                      <th className="p-4">Value / Cost</th>
+                      <th className="p-4 text-right">Action</th>
                     </>
                   )}
 
@@ -957,7 +955,7 @@ export default function CRMClientList({
                                   </span>
                                 ) : null}
                                 {!client.email && !client.phone && (
-                                  <span className="text-slate-400 italic">Sin contacto</span>
+                                  <span className="text-slate-400 italic">No contact</span>
                                 )}
                               </div>
                             </td>
@@ -970,7 +968,7 @@ export default function CRMClientList({
                                   <span>{client.address}</span>
                                 </span>
                               ) : (
-                                <span className="text-slate-400 italic">Sin dirección</span>
+                                <span className="text-slate-400 italic">No address</span>
                               )}
                             </td>
 
@@ -979,7 +977,7 @@ export default function CRMClientList({
                               {client.location ? (
                                 <span>{client.location}</span>
                               ) : (
-                                <span className="text-slate-400 italic">Sin locación</span>
+                                <span className="text-slate-400 italic">No location</span>
                               )}
                             </td>
 
@@ -988,7 +986,7 @@ export default function CRMClientList({
                               <div className="flex flex-col gap-1">
                                 <span className="font-extrabold text-slate-900 font-mono flex items-center gap-1.5">
                                   <Calendar className="h-3.5 w-3.5 text-indigo-500 shrink-0" />
-                                  {client.eventDate || "No definida"}
+                                  {client.eventDate || "Not defined"}
                                 </span>
                                 {client.eventDate && (
                                   <span className={`px-2 py-0.5 text-[9px] font-black rounded-full w-max tracking-wide uppercase ${
@@ -996,7 +994,7 @@ export default function CRMClientList({
                                       ? "bg-rose-50 text-rose-600 border border-rose-100" 
                                       : "bg-emerald-50 text-emerald-700 border border-emerald-100 animate-pulse"
                                   }`}>
-                                    {isPast ? "⏳ Pasado" : "🔮 Futuro"}
+                                    {isPast ? "⏳ Past" : "🔮 Future"}
                                   </span>
                                 )}
                               </div>
@@ -1004,7 +1002,7 @@ export default function CRMClientList({
 
                             {/* Horas Contratadas */}
                             <td className="p-4 font-bold text-slate-700">
-                              {client.eventHours ? `${client.eventHours} Horas` : <span className="text-slate-400 italic font-normal">--</span>}
+                              {client.eventHours ? `${client.eventHours} Hours` : <span className="text-slate-400 italic font-normal">--</span>}
                             </td>
 
                             {/* Start Time */}
@@ -1057,7 +1055,7 @@ export default function CRMClientList({
                                   {client.eventType}
                                 </span>
                               ) : (
-                                <span className="text-slate-400 italic">Sin tipo</span>
+                                <span className="text-slate-400 italic">No type</span>
                               )}
                             </td>
 
@@ -1068,35 +1066,35 @@ export default function CRMClientList({
                                   📦 {client.equipment}
                                 </span>
                               ) : (
-                                <span className="text-slate-400 italic">Ninguno</span>
+                                <span className="text-slate-400 italic">None</span>
                               )}
                             </td>
 
-                            {/* Acciones */}
+                            {/* Action column */}
                             <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
                               <div className="flex items-center justify-end gap-1.5">
                                 <button
                                   onClick={() => onEditClientClick(client)}
                                   className="p-1.5 border border-slate-150 hover:border-indigo-400 hover:text-indigo-600 rounded-lg text-slate-400 transition-colors bg-white shadow-sm"
-                                  title="Editar registro"
+                                  title="Edit record"
                                 >
                                   <FileEdit className="h-4 w-4" />
                                 </button>
                                 <button
                                   onClick={() => {
-                                    if (window.confirm(`¿Estás seguro de que deseas eliminar a ${client.name}?`)) {
+                                    if (window.confirm(`Are you sure you want to delete ${client.name}?`)) {
                                       onDeleteClient(client.id);
                                     }
                                   }}
-                                  className="p-1.5 border border-slate-150 hover:border-rose-400 hover:text-rose-600 rounded-lg text-slate-400 transition-colors bg-white shadow-sm"
-                                  title="Eliminar registro"
+                                  className="p-1.5 border border-slate-150 hover:border-rose-400 hover:bg-rose-600 rounded-lg text-slate-400 transition-colors bg-white shadow-sm"
+                                  title="Delete record"
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </button>
                                 <button
                                   onClick={() => onClientClick(client)}
                                   className="p-1.5 border border-slate-150 hover:border-indigo-400 hover:text-indigo-600 rounded-lg text-slate-400 transition-colors bg-white shadow-sm"
-                                  title="Ver detalles"
+                                  title="View details"
                                 >
                                   <ChevronRight className="h-4 w-4" />
                                 </button>
@@ -1137,7 +1135,7 @@ export default function CRMClientList({
                                 </span>
                               )}
                               {!client.email && !client.phone && (
-                                <span className="text-slate-400 italic">Sin contacto</span>
+                                <span className="text-slate-400 italic">No contact</span>
                               )}
                             </td>
 
@@ -1148,7 +1146,7 @@ export default function CRMClientList({
                                   ? "bg-emerald-50 text-emerald-700 border-emerald-100"
                                   : "bg-amber-50 text-amber-700 border-amber-100"
                               }`}>
-                                {client.contractStatus || "Pendiente"}
+                                {client.contractStatus || "Pending"}
                               </span>
                             </td>
 
@@ -1159,40 +1157,40 @@ export default function CRMClientList({
                                   ? "bg-teal-50 text-teal-700 border-teal-100"
                                   : "bg-slate-100 text-slate-600 border-slate-200"
                               }`}>
-                                Factura: {client.invoiceSent || "No"}
+                                Invoice: {client.invoiceSent || "No"}
                               </span>
                             </td>
 
                             {/* Información */}
                             <td className="p-4 text-slate-500 max-w-[250px] truncate font-medium">
-                              {client.info || "Sin información adicional"}
+                              {client.info || "No additional information"}
                             </td>
 
-                            {/* Acciones */}
+                            {/* Actions */}
                             <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
                               <div className="flex items-center justify-end gap-1.5">
                                 <button
                                   onClick={() => onEditClientClick(client)}
                                   className="p-1.5 border border-slate-150 hover:border-indigo-400 hover:text-indigo-600 rounded-lg text-slate-400 transition-colors bg-white shadow-sm"
-                                  title="Editar registro"
+                                  title="Edit record"
                                 >
                                   <FileEdit className="h-4 w-4" />
                                 </button>
                                 <button
                                   onClick={() => {
-                                    if (window.confirm(`¿Estás seguro de que deseas eliminar a ${client.name}?`)) {
+                                    if (window.confirm(`Are you sure you want to delete ${client.name}?`)) {
                                       onDeleteClient(client.id);
                                     }
                                   }}
                                   className="p-1.5 border border-slate-150 hover:border-rose-400 hover:text-rose-600 rounded-lg text-slate-400 transition-colors bg-white shadow-sm"
-                                  title="Eliminar registro"
+                                  title="Delete record"
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </button>
                                 <button
                                   onClick={() => onClientClick(client)}
                                   className="p-1.5 border border-slate-150 hover:border-indigo-400 hover:text-indigo-600 rounded-lg text-slate-400 transition-colors bg-white shadow-sm"
-                                  title="Ver detalles"
+                                  title="View details"
                                 >
                                   <ChevronRight className="h-4 w-4" />
                                 </button>
@@ -1224,18 +1222,18 @@ export default function CRMClientList({
                                   {client.location}
                                 </span>
                               ) : (
-                                <span className="text-slate-400 italic">No definida</span>
+                                <span className="text-slate-400 italic">Not defined</span>
                               )}
                             </td>
 
                             {/* Fecha */}
                             <td className="p-4 font-mono font-bold text-slate-900">
-                              {client.eventDate || "No definida"}
+                              {client.eventDate || "Not defined"}
                             </td>
 
                             {/* Tipo de Evento */}
                             <td className="p-4 text-slate-600 font-medium">
-                              {client.eventType || "No definido"}
+                              {client.eventType || "Not defined"}
                             </td>
 
                             {/* Staff Requerido */}
@@ -1245,7 +1243,7 @@ export default function CRMClientList({
                                   👤 {client.marketingStaff}
                                 </span>
                               ) : (
-                                <span className="text-slate-400 italic">No asignado</span>
+                                <span className="text-slate-400 italic">Not assigned</span>
                               )}
                             </td>
 
@@ -1256,7 +1254,7 @@ export default function CRMClientList({
                                   💰 {client.marketingValue}
                                 </span>
                               ) : (
-                                <span className="text-slate-400 italic">Gratis / No especificado</span>
+                                <span className="text-slate-400 italic">Free / Not specified</span>
                               )}
                             </td>
 
@@ -1266,25 +1264,25 @@ export default function CRMClientList({
                                 <button
                                   onClick={() => onEditClientClick(client)}
                                   className="p-1.5 border border-slate-150 hover:border-indigo-400 hover:text-indigo-600 rounded-lg text-slate-400 transition-colors bg-white shadow-sm"
-                                  title="Editar registro"
+                                  title="Edit record"
                                 >
                                   <FileEdit className="h-4 w-4" />
                                 </button>
                                 <button
                                   onClick={() => {
-                                    if (window.confirm(`¿Estás seguro de que deseas eliminar a ${client.name}?`)) {
+                                    if (window.confirm(`Are you sure you want to delete ${client.name}?`)) {
                                       onDeleteClient(client.id);
                                     }
                                   }}
                                   className="p-1.5 border border-slate-150 hover:border-rose-400 hover:text-rose-600 rounded-lg text-slate-400 transition-colors bg-white shadow-sm"
-                                  title="Eliminar registro"
+                                  title="Delete record"
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </button>
                                 <button
                                   onClick={() => onClientClick(client)}
                                   className="p-1.5 border border-slate-150 hover:border-indigo-400 hover:text-indigo-600 rounded-lg text-slate-400 transition-colors bg-white shadow-sm"
-                                  title="Ver detalles"
+                                  title="View details"
                                 >
                                   <ChevronRight className="h-4 w-4" />
                                 </button>
@@ -1300,9 +1298,9 @@ export default function CRMClientList({
                   <tr id="empty-state-row">
                     <td colSpan={8} className="p-12 text-center" id="empty-state-td">
                       <Tag className="h-10 w-10 text-slate-300 mx-auto mb-3 animate-pulse" />
-                      <h4 className="text-base font-bold text-slate-800">No se encontraron registros en esta pestaña</h4>
+                      <h4 className="text-base font-bold text-slate-800">No records found in this tab</h4>
                       <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-                        Carga tu archivo Excel para poblar automáticamente los registros correspondientes o agrega uno de forma manual.
+                        Load your Excel file to automatically populate corresponding records or add one manually.
                       </p>
                     </td>
                   </tr>

@@ -153,7 +153,7 @@ export default function App() {
           email: clientData.email || "",
           phone: clientData.phone || "",
           value: Number(clientData.value) || 0,
-          stage: clientData.stage || "Prospecto",
+          stage: clientData.stage || "Lead",
           notes: [],
           tasks: [],
           createdAt: new Date().toISOString(),
@@ -260,7 +260,7 @@ export default function App() {
         email: demo.email || "",
         phone: demo.phone || "",
         value: Number(demo.value) || 0,
-        stage: demo.stage || "Prospecto",
+        stage: demo.stage || "Lead",
         notes: demo.notes || [],
         tasks: demo.tasks || [],
         createdAt: new Date().toISOString(),
@@ -297,7 +297,7 @@ export default function App() {
     if (isOfflineMode) {
       setClients([]);
       localStorage.removeItem("crm_local_clients");
-      showToast("Se han eliminado todos los contactos locales con éxito.", "info");
+      showToast("All local contacts have been successfully deleted.", "info");
       return;
     }
 
@@ -308,10 +308,10 @@ export default function App() {
       const deletePromises = snapshot.docs.map(docSnapshot => deleteDoc(docSnapshot.ref));
       await Promise.all(deletePromises);
       setClients([]); // Instantly clear clients state locally
-      showToast("Se han eliminado todos los contactos de la nube de Firebase con éxito.", "info");
+      showToast("All contacts have been successfully deleted from the Firebase cloud.", "info");
     } catch (error: any) {
-      console.error("Error al limpiar base de datos:", error);
-      showToast(`No se pudo limpiar la base de datos: ${error.message}`, "error");
+      console.error("Error clearing database:", error);
+      showToast(`Could not clear the database: ${error.message}`, "error");
     } finally {
       setLoading(false);
     }
@@ -327,12 +327,12 @@ export default function App() {
       await new Promise(resolve => setTimeout(resolve, 600));
       const loaded: CRMClient[] = importedList.map((clientItem, idx) => ({
         id: `local-import-${idx}-${Date.now()}`,
-        name: clientItem.name || "Sin nombre",
+        name: clientItem.name || "Unnamed Client",
         company: clientItem.company || "",
         email: clientItem.email || "",
         phone: clientItem.phone || "",
         value: Number(clientItem.value) || 0,
-        stage: clientItem.stage || "Prospecto",
+        stage: clientItem.stage || "Lead",
         notes: [],
         tasks: [],
         createdAt: new Date().toISOString(),
@@ -488,7 +488,7 @@ export default function App() {
                 eventType: eventTypeVal ? String(eventTypeVal).trim() : "",
                 equipment: equipmentVal ? String(equipmentVal).trim() : "",
                 category: "event_tracker" as const,
-                stage: "Contactado" as const,
+                stage: "Contacted" as const,
                 value: 0
               };
             }).filter(item => item.name);
@@ -518,11 +518,11 @@ export default function App() {
                 name: nameVal ? String(nameVal).trim() : "",
                 email: emailVal ? String(emailVal).trim() : "",
                 phone: phoneVal ? String(phoneVal).trim() : "",
-                contractStatus: contractStatusVal ? String(contractStatusVal).trim() : "Pendiente",
+                contractStatus: contractStatusVal ? String(contractStatusVal).trim() : "Pending",
                 invoiceSent: invoiceSentVal ? String(invoiceSentVal).trim() : "No",
                 info: infoVal ? String(infoVal).trim() : "",
                 category: "clientes_pendientes" as const,
-                stage: "Prospecto" as const,
+                stage: "Lead" as const,
                 value: 0
               };
             }).filter(item => item.name);
@@ -551,11 +551,11 @@ export default function App() {
                   plannerItems.push({
                     name: colA,
                     eventDate: currentDate || "6/25/2026",
-                    contractStatus: colB || "Pendiente",
+                    contractStatus: colB || "Pending",
                     helper: colC,
                     info: colD,
                     category: "daily_event_planner" as const,
-                    stage: colB.toLowerCase().includes("done") || colB.toLowerCase().includes("terminado") ? ("Ganado" as const) : ("Prospecto" as const),
+                    stage: colB.toLowerCase().includes("done") || colB.toLowerCase().includes("terminado") ? ("Won" as const) : ("Lead" as const),
                     value: 0
                   });
                 }
@@ -588,7 +588,7 @@ export default function App() {
               if (cleaned) valueNum = Number(cleaned) || 0;
 
               marketingItems.push({
-                name: name || "Evento de Marketing",
+                name: name || "Marketing Event",
                 location: location,
                 eventDate: date,
                 eventType: eventType,
@@ -596,7 +596,7 @@ export default function App() {
                 marketingValue: valueRaw,
                 value: valueNum,
                 category: "event_marketing" as const,
-                stage: "Prospecto" as const
+                stage: "Lead" as const
               });
             });
             allImportedItems.push(...marketingItems);
@@ -611,11 +611,11 @@ export default function App() {
           const trackerFallback = jsonRows.map((row) => {
             const keys = Object.keys(row);
             return {
-              name: String(row[keys[0]] || "Cliente sin nombre").trim(),
+              name: String(row[keys[0]] || "Unnamed Client").trim(),
               email: String(row[keys[2]] || "").trim(),
               phone: String(row[keys[3]] || "").trim(),
               category: "event_tracker" as const,
-              stage: "Prospecto" as const,
+              stage: "Lead" as const,
               value: 0
             };
           }).filter(item => item.name);
@@ -628,8 +628,8 @@ export default function App() {
           showToast("No se encontraron registros válidos en las pestañas de tu archivo de Excel.", "error");
         }
       } catch (err) {
-        console.error("Error leyendo archivo de Excel:", err);
-        showToast("Ocurrió un error al procesar el archivo Excel. Asegúrate de que sea un formato válido.", "error");
+        console.error("Error reading Excel file:", err);
+        showToast("An error occurred while processing the Excel file. Please ensure it is a valid format.", "error");
       }
     };
     reader.readAsArrayBuffer(file);
@@ -659,7 +659,7 @@ export default function App() {
                   Spark Group
                 </h2>
                 <span className="text-[9px] text-indigo-600 font-mono font-bold flex items-center gap-1 leading-none uppercase tracking-widest mt-0.5">
-                  <CloudLightning className="h-3 w-3 shrink-0" /> Sincronización Firebase Real-Time
+                  <CloudLightning className="h-3 w-3 shrink-0" /> Real-Time Firebase Sync
                 </span>
               </div>
             </div>
@@ -678,16 +678,16 @@ export default function App() {
                       setFirebaseError(null);
                     }}
                     className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-200 hover:bg-amber-100 text-amber-700 rounded-xl text-[10px] font-bold font-mono transition-all"
-                    title="Hacer clic para reintentar sincronizar con Firebase"
+                    title="Click to retry syncing with Firebase"
                     id="offline-retry-indicator"
                   >
                     <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0" />
-                    <span>Modo Local (Offline)</span>
+                    <span>Local Mode (Offline)</span>
                   </button>
                 ) : (
                   <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-[10px] font-bold font-mono" id="online-indicator">
                     <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                    <span>Nube: {clients.length} contactos</span>
+                    <span>Cloud: {clients.length} contacts</span>
                   </div>
                 )}
               </div>
@@ -702,7 +702,7 @@ export default function App() {
                 id="header-add-client-btn"
               >
                 <Plus className="h-4 w-4" />
-                <span className="hidden md:inline">Agregar Contacto</span>
+                <span className="hidden md:inline">Add Contact</span>
               </button>
 
               {/* AI Assistant toggle trigger */}
@@ -716,7 +716,7 @@ export default function App() {
                 id="header-toggle-ai"
               >
                 <Sparkles className="h-4 w-4 text-indigo-400" />
-                {showAIChat ? "Ocultar IA" : "Asistente IA"}
+                {showAIChat ? "Hide AI" : "AI Assistant"}
               </button>
             </div>
           </div>
@@ -735,10 +735,10 @@ export default function App() {
                 <AlertCircle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
                 <div className="space-y-1">
                   <h4 className="text-xs font-bold text-slate-900 font-sans">
-                    Sincronización Cloud Pausada
+                    Cloud Sync Paused
                   </h4>
                   <p className="text-[11px] text-slate-600 leading-relaxed">
-                    No pudimos conectar con tu base de datos de Firebase: <strong>{firebaseError}</strong>. Para evitar quedarte esperando, puedes activar el <strong>Modo Offline (Local)</strong> y usar la aplicación con persistencia local en tu navegador.
+                    Could not connect to your Firebase database: <strong>{firebaseError}</strong>. To avoid waiting, you can activate <strong>Local Mode (Offline)</strong> and use the app with local persistence in your browser.
                   </p>
                 </div>
               </div>
@@ -752,7 +752,7 @@ export default function App() {
                   className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold shadow-sm transition-all whitespace-nowrap"
                   id="error-use-offline-btn"
                 >
-                  Activar Modo Local
+                  Activate Local Mode
                 </button>
               </div>
             </div>
@@ -764,14 +764,14 @@ export default function App() {
             {/* Left page Title / Segment information */}
             <div>
               <h1 className="text-lg md:text-xl font-black text-slate-900 tracking-tight" id="workspace-title">
-                {currentTab === "dashboard" && "Tablero de Control Analítico"}
-                {currentTab === "clients" && "Directorio de Clientes Cloud"}
-                {currentTab === "kanban" && "Embudo de Procesos (Kanban)"}
+                {currentTab === "dashboard" && "Analytical Dashboard"}
+                {currentTab === "clients" && "Cloud Client Directory"}
+                {currentTab === "kanban" && "Pipeline Funnel (Kanban)"}
               </h1>
               <p className="text-xs text-slate-500 mt-0.5" id="workspace-subtitle">
-                {currentTab === "dashboard" && "Resumen en tiempo real de tu pipeline comercial, volumen y tareas urgentes."}
-                {currentTab === "clients" && "Base de datos unificada para administrar clientes, notas, contactos e importaciones."}
-                {currentTab === "kanban" && "Mueve a tus clientes a través del pipeline comercial con arrastrar y soltar."}
+                {currentTab === "dashboard" && "Real-time summary of your sales pipeline, deals volume, and urgent tasks."}
+                {currentTab === "clients" && "Unified database to manage clients, notes, contacts, and imports."}
+                {currentTab === "kanban" && "Move your clients through the sales pipeline with drag and drop."}
               </p>
             </div>
 
@@ -787,7 +787,7 @@ export default function App() {
                 id="tab-btn-dashboard"
               >
                 <LayoutDashboard className="h-4 w-4 text-slate-500" />
-                Resumen
+                Summary
               </button>
               <button
                 onClick={() => setCurrentTab("clients")}
@@ -799,7 +799,7 @@ export default function App() {
                 id="tab-btn-clients"
               >
                 <Users className="h-4 w-4 text-slate-500" />
-                Clientes
+                Clients
               </button>
               <button
                 onClick={() => setCurrentTab("kanban")}
@@ -811,7 +811,7 @@ export default function App() {
                 id="tab-btn-kanban"
               >
                 <Kanban className="h-4 w-4 text-slate-500" />
-                Flujo Kanban
+                Kanban Flow
               </button>
             </div>
           </div>
@@ -820,7 +820,7 @@ export default function App() {
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20 space-y-3.5" id="global-loading">
               <div className="h-8 w-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" id="spin" />
-              <p className="text-xs font-bold text-slate-500 font-mono animate-pulse">Sincronizando con base de datos de Firebase...</p>
+              <p className="text-xs font-bold text-slate-500 font-mono animate-pulse">Syncing with Firebase database...</p>
             </div>
           ) : (
             <div id="workspace-active-panel">
@@ -832,14 +832,14 @@ export default function App() {
                       <Database className="h-6 w-6" />
                     </div>
                     <div className="space-y-2">
-                      <h3 className="text-lg font-black text-slate-950" id="onboard-title">¡Bienvenido a tu nuevo Gestor Cloud!</h3>
+                      <h3 className="text-lg font-black text-slate-950" id="onboard-title">Welcome to your new Cloud Manager!</h3>
                       <p className="text-xs md:text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
-                        Has eliminado con éxito la necesidad de usar Excel para organizar tu negocio. Tus contactos ahora se guardan de forma permanente, segura y rápida en la nube de Firebase.
+                        You have successfully eliminated the need to use Excel to organize your business. Your contacts are now saved permanently, securely, and quickly in the Firebase cloud.
                       </p>
                     </div>
 
                     <div className="p-4 bg-slate-50 rounded-2xl border border-slate-150 space-y-3" id="onboard-actions">
-                      <p className="text-[11px] font-bold text-slate-600 uppercase tracking-wider block">Elige cómo comenzar:</p>
+                      <p className="text-[11px] font-bold text-slate-600 uppercase tracking-wider block">Choose how to begin:</p>
                       <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5" id="onboard-btn-group">
                         <button
                           onClick={() => {
@@ -850,16 +850,16 @@ export default function App() {
                           id="onboard-add-btn"
                         >
                           <Plus className="h-4 w-4" />
-                          Crear primer cliente
+                          Create first client
                         </button>
                         
                         <label
                           className="w-full sm:w-auto px-4 py-2.5 bg-white border border-slate-200 hover:border-indigo-400 hover:text-indigo-600 text-slate-700 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"
                           id="onboard-import-label"
-                          title="Importar una base de datos existente desde Excel o CSV"
+                          title="Import an existing database from Excel or CSV"
                         >
                           <Download className="h-4 w-4 text-slate-400" />
-                          <span>Importar de Excel</span>
+                          <span>Import from Excel</span>
                           <input 
                             type="file" 
                             accept=".xlsx, .xls, .csv" 
@@ -946,10 +946,10 @@ export default function App() {
               </div>
               <div>
                 <h4 className="text-xs font-bold text-slate-900 font-sans">
-                  Importación en Progreso
+                  Import in Progress
                 </h4>
                 <p className="text-[10px] text-slate-500 font-mono">
-                  Sincronizando {importingStatus.current} de {importingStatus.total}
+                  Syncing {importingStatus.current} of {importingStatus.total}
                 </p>
               </div>
             </div>
@@ -964,7 +964,7 @@ export default function App() {
                 />
               </div>
               <span className="text-[10px] font-black text-slate-400 font-mono float-right">
-                {Math.round((importingStatus.current / importingStatus.total) * 100)}% completo
+                {Math.round((importingStatus.current / importingStatus.total) * 100)}% complete
               </span>
             </div>
           </div>
@@ -981,10 +981,10 @@ export default function App() {
               </div>
               <div className="space-y-1">
                 <h4 className="text-sm font-bold text-slate-900 font-sans">
-                  ¿Eliminar todos los contactos?
+                  Delete all contacts?
                 </h4>
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  Esta acción es permanente e irreversible. Borrará tanto los datos de demostración como todos los contactos que hayas importado de Excel.
+                  This action is permanent and irreversible. It will delete both demo data and all contacts you have imported from Excel.
                 </p>
               </div>
             </div>
@@ -995,14 +995,14 @@ export default function App() {
                 className="px-3.5 py-2 hover:bg-slate-50 text-slate-600 hover:text-slate-900 text-xs font-bold rounded-xl transition-colors border border-transparent hover:border-slate-200"
                 id="clear-database-cancel-btn"
               >
-                Cancelar
+                Cancel
               </button>
               <button
                 onClick={executeClearDatabase}
                 className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded-xl shadow-md shadow-rose-600/10 transition-colors animate-pulse"
                 id="clear-database-confirm-btn"
               >
-                Sí, limpiar base de datos
+                Yes, clear database
               </button>
             </div>
           </div>
@@ -1028,7 +1028,7 @@ export default function App() {
           </div>
           <div className="space-y-0.5 flex-1" id="toast-content">
             <h5 className="text-[11px] font-extrabold text-slate-900 uppercase tracking-wider font-sans">
-              {toast.type === "success" ? "Operación Exitosa" : "Mensaje del Sistema"}
+              {toast.type === "success" ? "Operation Successful" : "System Message"}
             </h5>
             <p className="text-[11px] text-slate-600 leading-relaxed font-medium">
               {toast.message}

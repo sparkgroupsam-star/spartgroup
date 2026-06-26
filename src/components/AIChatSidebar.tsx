@@ -14,19 +14,19 @@ export default function AIChatSidebar({ clients }: AIChatSidebarProps) {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Initialize with a welcome message in Spanish
+  // Initialize with a welcome message in English
   useEffect(() => {
     setMessages([
       {
         id: "welcome",
         role: "system",
-        text: `¡Hola! Soy tu **Asistente IA para CRM Cloud**. He analizado tu base de datos de clientes activos en tiempo real (${clients.length} contactos) y estoy listo para ayudarte a gestionar y sistematizar tus relaciones comerciales.
+        text: `Hello! I am your **Cloud CRM AI Assistant**. I have analyzed your active client database in real-time (${clients.length} contacts) and I am ready to help you manage and organize your sales relationships.
 
-Puedes hacerme preguntas como:
-* *"¿Cómo está distribuido mi embudo de ventas actual?"*
-* *"¿Qué clientes tienen tareas de seguimiento pendientes para hoy/mañana?"*
-* *"Escribe una plantilla de correo personalizada para un cliente en etapa de negociación."*
-* *"Hazme un análisis de salud general de mi pipeline comercial."*`,
+You can ask me questions like:
+* *"How is my current sales funnel distributed?"*
+* *"Which clients have pending follow-up tasks for today/tomorrow?"*
+* *"Write a personalized email template for a client in the negotiation stage."*
+* *"Give me a general health analysis of my sales pipeline."*`,
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       },
     ]);
@@ -60,27 +60,27 @@ Puedes hacerme preguntas como:
     try {
       // Map live cloud client dataset to columns/rows for the backend chat prompt
       const mappedColumns = [
-        { name: "Nombre del Cliente", key: "name", type: "string" },
-        { name: "Empresa / Negocio", key: "company", type: "string" },
-        { name: "Correo Electrónico", key: "email", type: "string" },
-        { name: "Teléfono", key: "phone", type: "string" },
-        { name: "Valor Estimado ($)", key: "value", type: "number" },
-        { name: "Etapa de Ventas", key: "stage", type: "string" },
-        { name: "Fecha Registro", key: "createdAt", type: "date" },
-        { name: "Notas de Historial", key: "notes", type: "string" },
-        { name: "Tareas de Seguimiento", key: "tasks", type: "string" }
+        { name: "Client Name", key: "name", type: "string" },
+        { name: "Company / Business", key: "company", type: "string" },
+        { name: "Email", key: "email", type: "string" },
+        { name: "Phone", key: "phone", type: "string" },
+        { name: "Estimated Value ($)", key: "value", type: "number" },
+        { name: "Sales Stage", key: "stage", type: "string" },
+        { name: "Registration Date", key: "createdAt", type: "date" },
+        { name: "History Notes", key: "notes", type: "string" },
+        { name: "Follow-up Tasks", key: "tasks", type: "string" }
       ];
 
       const mappedRows = clients.map((c) => ({
-        "Nombre del Cliente": c.name,
-        "Empresa / Negocio": c.company || "Personal",
-        "Correo Electrónico": c.email || "No registrado",
-        "Teléfono": c.phone || "No registrado",
-        "Valor Estimado ($)": c.value || 0,
-        "Etapa de Ventas": c.stage,
-        "Fecha Registro": c.createdAt ? new Date(c.createdAt).toLocaleDateString("es-ES") : "Sin fecha",
-        "Notas de Historial": c.notes?.slice(0, 3).map(n => `[${n.createdAt}] ${n.text}`).join(" // ") || "Sin notas",
-        "Tareas de Seguimiento": c.tasks?.filter(t => !t.completed).map(t => `${t.title} (Vence: ${t.dueDate})`).join(" // ") || "Ninguna"
+        "Client Name": c.name,
+        "Company / Business": c.company || "Personal",
+        "Email": c.email || "Not registered",
+        "Phone": c.phone || "Not registered",
+        "Estimated Value ($)": c.value || 0,
+        "Sales Stage": c.stage,
+        "Registration Date": c.createdAt ? new Date(c.createdAt).toLocaleDateString("en-US") : "No date",
+        "History Notes": c.notes?.slice(0, 3).map(n => `[${n.createdAt}] ${n.text}`).join(" // ") || "No notes",
+        "Follow-up Tasks": c.tasks?.filter(t => !t.completed).map(t => `${t.title} (Due: ${t.dueDate})`).join(" // ") || "None"
       }));
 
       // Send chat history and current spreadsheet data representation
@@ -94,7 +94,7 @@ Puedes hacerme preguntas como:
             role: m.role,
             text: m.text,
           })),
-          sheetName: "Clientes CRM Cloud",
+          sheetName: "Cloud CRM Clients",
           columns: mappedColumns,
           rows: mappedRows,
         }),
@@ -103,13 +103,13 @@ Puedes hacerme preguntas como:
       const data = await response.json();
 
       if (!response.ok) {
-        if (data.error === "API Key de Gemini no configurada" || response.status === 400) {
+        if (data.error === "Gemini API Key not configured" || data.error === "API Key de Gemini no configurada" || response.status === 400) {
           setApiKeyError({
-            title: "Configuración Requerida",
-            desc: data.message || "Por favor, configura tu GEMINI_API_KEY en la pestaña Secrets de AI Studio para activar las funciones de IA.",
+            title: "Configuration Required",
+            desc: data.message || "Please configure your GEMINI_API_KEY in the Secrets tab of AI Studio to activate AI features.",
           });
         } else {
-          throw new Error(data.error || "Error de comunicación con el servidor");
+          throw new Error(data.error || "Server communication error");
         }
         setIsLoading(false);
         return;
@@ -125,13 +125,13 @@ Puedes hacerme preguntas como:
 
       setMessages((prev) => [...prev, botMessage]);
     } catch (err: any) {
-      console.error("Error chateando con IA:", err);
+      console.error("Error chating with AI:", err);
       setMessages((prev) => [
         ...prev,
         {
           id: `error-${Date.now()}`,
           role: "model",
-          text: `⚠️ **Error de conexión:** Lo siento, no pude comunicarme con mi cerebro de IA. Detalle: ${err.message || "Error desconocido"}.`,
+          text: `⚠️ **Connection Error:** Sorry, I couldn't communicate with my AI brain. Detail: ${err.message || "Unknown error"}.`,
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         },
       ]);
@@ -153,9 +153,9 @@ Puedes hacerme preguntas como:
             <Sparkles className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="font-bold text-sm text-white" id="ai-assistant-name">Asistente de IA (CRM)</h3>
+            <h3 className="font-bold text-sm text-white" id="ai-assistant-name">AI Assistant (CRM)</h3>
             <span className="text-[10px] text-emerald-400 font-mono flex items-center gap-1 font-bold" id="ai-status">
-              ● En línea (Gemini 3.5)
+              ● Online (Gemini 3.5)
             </span>
           </div>
         </div>
@@ -237,9 +237,9 @@ Puedes hacerme preguntas como:
                 {apiKeyError.desc}
               </p>
               <div className="mt-3 p-2.5 bg-slate-950 rounded-lg text-[10px] font-mono text-slate-400 border border-slate-800" id="api-err-guide">
-                1. Ve al menú <b>Settings (⚙️)</b><br />
-                2. Selecciona <b>Secrets</b><br />
-                3. Añade la variable:<br />
+                1. Go to the <b>Settings (⚙️)</b> menu<br />
+                2. Select <b>Secrets</b><br />
+                3. Add the variable:<br />
                 <span className="text-amber-400 font-bold">GEMINI_API_KEY</span>
               </div>
             </div>
@@ -253,7 +253,7 @@ Puedes hacerme preguntas como:
             </div>
             <div className="p-4 bg-slate-800 text-slate-400 rounded-2xl rounded-tl-none flex items-center gap-2 text-xs" id="loading-spinner">
               <Loader2 className="h-4 w-4 animate-spin text-indigo-400" />
-              <span>Gemini analizando pipeline cloud...</span>
+              <span>Gemini analyzing cloud pipeline...</span>
             </div>
           </div>
         )}
@@ -265,22 +265,22 @@ Puedes hacerme preguntas como:
       {messages.length === 1 && !isLoading && (
         <div className="p-3 bg-slate-950 border-t border-slate-800 space-y-1.5" id="quick-suggestions-panel">
           <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1 mb-1">
-            <HelpCircle className="h-3.5 w-3.5 text-indigo-400" /> Preguntas Sugeridas:
+            <HelpCircle className="h-3.5 w-3.5 text-indigo-400" /> Suggested Questions:
           </span>
           <div className="flex flex-col gap-1.5" id="suggestions-list">
             <button
-              onClick={() => suggestQuestion("Hazme un análisis de salud general de mi embudo actual.")}
+              onClick={() => suggestQuestion("Give me a general health analysis of my current pipeline.")}
               className="text-left text-[11px] px-2.5 py-1.5 bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-lg text-slate-300 hover:text-indigo-400 transition-colors"
               id="sug-btn-1"
             >
-              📊 Salud de mi pipeline
+              📊 Pipeline health analysis
             </button>
             <button
-              onClick={() => suggestQuestion("Escribe un correo de seguimiento persuasivo para mi cliente en etapa de negociación.")}
+              onClick={() => suggestQuestion("Write a persuasive follow-up email for my client in the negotiation stage.")}
               className="text-left text-[11px] px-2.5 py-1.5 bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-lg text-slate-300 hover:text-indigo-400 transition-colors"
               id="sug-btn-2"
             >
-              ✉️ Plantilla de correo (Negociación)
+              ✉️ Email template (Negotiation)
             </button>
           </div>
         </div>
@@ -290,7 +290,7 @@ Puedes hacerme preguntas como:
       <form onSubmit={handleSendMessage} className="p-3 bg-slate-950 border-t border-slate-800 flex gap-2" id="chat-input-form">
         <input
           type="text"
-          placeholder="Pregunta a la IA sobre tu pipeline cloud..."
+          placeholder="Ask AI about your cloud pipeline..."
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           disabled={isLoading}

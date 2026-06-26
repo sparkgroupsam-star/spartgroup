@@ -77,7 +77,7 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
   const [phone, setPhone] = useState("");
   const [company, setCompany] = useState("");
   const [value, setValue] = useState<number>(0);
-  const [stage, setStage] = useState<CRMClient["stage"]>("Prospecto");
+  const [stage, setStage] = useState<CRMClient["stage"]>("Lead");
 
   // Advanced Multi-tab Category fields
   const [category, setCategory] = useState<CRMClient["category"]>("event_tracker");
@@ -105,7 +105,7 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
       setPhone(client.phone || "");
       setCompany(client.company || "");
       setValue(client.value || 0);
-      setStage(client.stage || "Prospecto");
+      setStage(client.stage || "Lead");
       
       setCategory(client.category || "event_tracker");
       setAddress(client.address || "");
@@ -130,7 +130,7 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
       setPhone("");
       setCompany("");
       setValue(0);
-      setStage("Prospecto");
+      setStage("Lead");
       
       setCategory("event_tracker");
       setAddress("");
@@ -197,10 +197,10 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
           <div>
             <h3 className="text-base font-bold text-slate-950 flex items-center gap-2" id="crm-form-title">
               <Tag className="h-4 w-4 text-indigo-600" />
-              {client ? "Editar Información del Registro" : "Agregar Nuevo Registro"}
+              {client ? "Edit Record Information" : "Add New Record"}
             </h3>
             <p className="text-xs text-slate-500 mt-0.5" id="crm-form-subtitle">
-              {client ? "Modifica los campos específicos de la pestaña seleccionada." : "Crea una ficha de contacto o evento clasificado en la nube."}
+              {client ? "Modify the specific fields of the selected tab." : "Create a new contact sheet or classified cloud event."}
             </p>
           </div>
           <button 
@@ -218,7 +218,7 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
           {/* Category Selector Tabs */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-700 block">
-              Pestaña / Categoría del Registro
+              Tab / Record Category
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
               <button
@@ -241,7 +241,7 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
                     : "text-slate-500 hover:text-slate-800"
                 }`}
               >
-                ⏳ Pendientes
+                ⏳ Pending
               </button>
               <button
                 type="button"
@@ -252,7 +252,7 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
                     : "text-slate-500 hover:text-slate-800"
                 }`}
               >
-                📅 Planner Diario
+                📅 Daily Planner
               </button>
               <button
                 type="button"
@@ -270,13 +270,13 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
 
           {/* Core Fields (Always shown) */}
           <div className="border-t border-slate-100 pt-4 space-y-4">
-            <h4 className="text-xs font-bold text-indigo-600 uppercase tracking-wider">Datos Básicos</h4>
+            <h4 className="text-xs font-bold text-indigo-600 uppercase tracking-wider">Basic Details</h4>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Name */}
               <div className="space-y-1.5" id="field-name-container">
                 <label className="text-xs font-bold text-slate-700 block" htmlFor="client-name-input">
-                  {category === "daily_event_planner" ? "Descripción de la Tarea / Evento" : "Nombre del Cliente / Evento"} <span className="text-rose-500">*</span>
+                  {category === "daily_event_planner" ? "Task Description / Event" : "Client Name / Event"} <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -286,7 +286,7 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
                     id="client-name-input"
                     type="text"
                     required
-                    placeholder={category === "daily_event_planner" ? "Ej: Preparar lista de globos" : "Ej: Carlos Pérez"}
+                    placeholder={category === "daily_event_planner" ? "e.g., Prepare balloon list" : "e.g., Carlos Perez"}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="pl-9 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
@@ -297,7 +297,7 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
               {/* Company */}
               <div className="space-y-1.5" id="field-company-container">
                 <label className="text-xs font-bold text-slate-700 block" htmlFor="client-company-input">
-                  Empresa / Negocio
+                  Company / Business
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -306,7 +306,7 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
                   <input
                     id="client-company-input"
                     type="text"
-                    placeholder="Ej: Innova Tech"
+                    placeholder="e.g., Innova Tech"
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                     className="pl-9 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
@@ -319,7 +319,7 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
               {/* Email */}
               <div className="space-y-1.5" id="field-email-container">
                 <label className="text-xs font-bold text-slate-700 block" htmlFor="client-email-input">
-                  Correo Electrónico
+                  Email Address
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -328,7 +328,7 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
                   <input
                     id="client-email-input"
                     type="email"
-                    placeholder="carlos@ejemplo.com"
+                    placeholder="carlos@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-9 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
@@ -339,7 +339,7 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
               {/* Phone */}
               <div className="space-y-1.5" id="field-phone-container">
                 <label className="text-xs font-bold text-slate-700 block" htmlFor="client-phone-input">
-                  Teléfono / Celular
+                  Phone / Mobile
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -348,7 +348,7 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
                   <input
                     id="client-phone-input"
                     type="tel"
-                    placeholder="Ej: +34 600 000 000"
+                    placeholder="e.g., +1 555 123 4567"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="pl-9 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
@@ -361,7 +361,7 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
               {/* Deal value */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 block">
-                  Valor del Trato ($)
+                  Deal Value ($)
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -370,7 +370,7 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
                   <input
                     type="number"
                     min="0"
-                    placeholder="Ej: 1500"
+                    placeholder="e.g., 1500"
                     value={value || ""}
                     onChange={(e) => setValue(Number(e.target.value))}
                     className="pl-9 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
@@ -381,18 +381,18 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
               {/* Pipeline Stage */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 block">
-                  Etapa del Embudo (Pipeline)
+                  Funnel Stage (Pipeline)
                 </label>
                 <select
                   value={stage}
                   onChange={(e) => setStage(e.target.value as CRMClient["stage"])}
                   className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-bold text-slate-700 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
                 >
-                  <option value="Prospecto">🆕 Prospecto</option>
-                  <option value="Contactado">📞 Contactado</option>
-                  <option value="Negociación">🤝 Negociación</option>
-                  <option value="Ganado">🎉 Ganado</option>
-                  <option value="Perdido">❌ Perdido</option>
+                  <option value="Lead">🆕 Lead</option>
+                  <option value="Contacted">📞 Contacted</option>
+                  <option value="Negotiation">🤝 Negotiation</option>
+                  <option value="Won">🎉 Won</option>
+                  <option value="Lost">❌ Lost</option>
                 </select>
               </div>
             </div>
@@ -402,25 +402,25 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
           {category === "event_tracker" && (
             <div className="border-t border-slate-100 pt-4 space-y-4 animate-fade-in">
               <h4 className="text-xs font-bold text-indigo-600 uppercase tracking-wider flex items-center gap-1.5">
-                <Calendar className="h-4 w-4" /> Campos de Event Tracker
+                <Calendar className="h-4 w-4" /> Event Tracker Fields
               </h4>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 block">Dirección Evento</label>
+                  <label className="text-xs font-bold text-slate-700 block">Event Address</label>
                   <input
                     type="text"
-                    placeholder="Ej: Calle Gran Vía 12"
+                    placeholder="e.g., 123 Main Street"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 block">Locación / Lugar</label>
+                  <label className="text-xs font-bold text-slate-700 block">Location / Venue</label>
                   <input
                     type="text"
-                    placeholder="Ej: Salón Real Metropol"
+                    placeholder="e.g., Grand Ballroom"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
@@ -430,7 +430,7 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 block">Fecha Evento</label>
+                  <label className="text-xs font-bold text-slate-700 block">Event Date</label>
                   <input
                     type="date"
                     value={formatDateForInput(eventDate)}
@@ -439,20 +439,20 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 block">Horas Contratadas</label>
+                  <label className="text-xs font-bold text-slate-700 block">Contracted Hours</label>
                   <input
                     type="text"
-                    placeholder="Ej: 5"
+                    placeholder="e.g., 5"
                     value={eventHours}
                     onChange={(e) => setEventHours(e.target.value)}
                     className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 block">Tipo de Evento</label>
+                  <label className="text-xs font-bold text-slate-700 block">Event Type</label>
                   <input
                     type="text"
-                    placeholder="Ej: Boda, Cumpleaños"
+                    placeholder="e.g., Wedding, Birthday"
                     value={eventType}
                     onChange={(e) => setEventType(e.target.value)}
                     className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
@@ -462,7 +462,7 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 block">Hora Inicio (Start Time)</label>
+                  <label className="text-xs font-bold text-slate-700 block">Start Time</label>
                   <input
                     type="time"
                     value={formatTimeForInput(startTime)}
@@ -471,7 +471,7 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 block">Hora Fin (End Time)</label>
+                  <label className="text-xs font-bold text-slate-700 block">End Time</label>
                   <input
                     type="time"
                     value={formatTimeForInput(endTime)}
@@ -486,7 +486,7 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
                   <label className="text-xs font-bold text-slate-700 block">Robot</label>
                   <input
                     type="text"
-                    placeholder="Ej: Sí / Led"
+                    placeholder="e.g., Yes / Led"
                     value={robot}
                     onChange={(e) => setRobot(e.target.value)}
                     className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
@@ -496,27 +496,27 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
                   <label className="text-xs font-bold text-slate-700 block">DJ Needed</label>
                   <input
                     type="text"
-                    placeholder="Ej: Yes / DJ Mark"
+                    placeholder="e.g., Yes / DJ Mark"
                     value={djNeeded}
                     onChange={(e) => setDjNeeded(e.target.value)}
                     className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 block">Ayudante / Helper</label>
+                  <label className="text-xs font-bold text-slate-700 block">Helper</label>
                   <input
                     type="text"
-                    placeholder="Ej: Pedro Ruiz"
+                    placeholder="e.g., Peter Smith"
                     value={helper}
                     onChange={(e) => setHelper(e.target.value)}
                     className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 block">Equipos / Equipment</label>
+                  <label className="text-xs font-bold text-slate-700 block">Equipment</label>
                   <input
                     type="text"
-                    placeholder="Ej: Parlantes, Cabina"
+                    placeholder="e.g., Speakers, DJ Booth"
                     value={equipment}
                     onChange={(e) => setEquipment(e.target.value)}
                     className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
@@ -530,25 +530,25 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
           {category === "clientes_pendientes" && (
             <div className="border-t border-slate-100 pt-4 space-y-4 animate-fade-in">
               <h4 className="text-xs font-bold text-indigo-600 uppercase tracking-wider flex items-center gap-1.5">
-                <Clock className="h-4 w-4" /> Campos de Clientes Pendientes
+                <Clock className="h-4 w-4" /> Pending Clients Fields
               </h4>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 block">Estado del Contrato (Contract Status)</label>
+                  <label className="text-xs font-bold text-slate-700 block">Contract Status</label>
                   <input
                     type="text"
-                    placeholder="Ej: Firmado, Por enviar"
+                    placeholder="e.g., Signed, Draft"
                     value={contractStatus}
                     onChange={(e) => setContractStatus(e.target.value)}
                     className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 block">Factura Enviada (Invoice Send)</label>
+                  <label className="text-xs font-bold text-slate-700 block">Invoice Sent</label>
                   <input
                     type="text"
-                    placeholder="Ej: Sí / No / Enviada"
+                    placeholder="e.g., Yes / No / Sent"
                     value={invoiceSent}
                     onChange={(e) => setInvoiceSent(e.target.value)}
                     className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
@@ -557,9 +557,9 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 block">Información Adicional / Notas</label>
+                <label className="text-xs font-bold text-slate-700 block">Additional Info / Notes</label>
                 <textarea
-                  placeholder="Escribe notas, observaciones, requerimientos del cliente pendiente..."
+                  placeholder="Write notes, remarks, pending client requirements..."
                   value={info}
                   onChange={(e) => setInfo(e.target.value)}
                   rows={3}
@@ -573,12 +573,12 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
           {category === "daily_event_planner" && (
             <div className="border-t border-slate-100 pt-4 space-y-4 animate-fade-in">
               <h4 className="text-xs font-bold text-indigo-600 uppercase tracking-wider flex items-center gap-1.5">
-                <CheckSquare className="h-4 w-4" /> Campos de Daily Event Planner
+                <CheckSquare className="h-4 w-4" /> Daily Event Planner Fields
               </h4>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 block">Fecha Planificada</label>
+                  <label className="text-xs font-bold text-slate-700 block">Planned Date</label>
                   <input
                     type="date"
                     value={formatDateForInput(eventDate)}
@@ -587,20 +587,20 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 block">Ayudantes o Vendedores (Staff)</label>
+                  <label className="text-xs font-bold text-slate-700 block">Helpers / Staff</label>
                   <input
                     type="text"
-                    placeholder="Ej: Pedro Martínez"
+                    placeholder="e.g., Peter Smith"
                     value={helper}
                     onChange={(e) => setHelper(e.target.value)}
                     className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 block">Estado de la Tarea</label>
+                  <label className="text-xs font-bold text-slate-700 block">Task Status</label>
                   <input
                     type="text"
-                    placeholder="Ej: Done, Pendiente"
+                    placeholder="e.g., Done, Pending"
                     value={contractStatus}
                     onChange={(e) => setContractStatus(e.target.value)}
                     className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
@@ -609,9 +609,9 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 block">Notas de la Tarea / Materiales</label>
+                <label className="text-xs font-bold text-slate-700 block">Task Notes / Materials</label>
                 <textarea
-                  placeholder="Materiales requeridos, notas de logística para este día..."
+                  placeholder="Required materials, logistics notes for this day..."
                   value={info}
                   onChange={(e) => setInfo(e.target.value)}
                   rows={2}
@@ -625,22 +625,22 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
           {category === "event_marketing" && (
             <div className="border-t border-slate-100 pt-4 space-y-4 animate-fade-in">
               <h4 className="text-xs font-bold text-indigo-600 uppercase tracking-wider flex items-center gap-1.5">
-                <Megaphone className="h-4 w-4" /> Campos de Event Marketing
+                <Megaphone className="h-4 w-4" /> Event Marketing Fields
               </h4>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 block">Locación del Evento</label>
+                  <label className="text-xs font-bold text-slate-700 block">Event Location</label>
                   <input
                     type="text"
-                    placeholder="Ej: Plaza Central"
+                    placeholder="e.g., Central Plaza"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 block">Fecha Evento</label>
+                  <label className="text-xs font-bold text-slate-700 block">Event Date</label>
                   <input
                     type="date"
                     value={formatDateForInput(eventDate)}
@@ -652,30 +652,30 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 block">Tipo de Evento</label>
+                  <label className="text-xs font-bold text-slate-700 block">Event Type</label>
                   <input
                     type="text"
-                    placeholder="Ej: Expo, Promoción"
+                    placeholder="e.g., Expo, Promotion"
                     value={eventType}
                     onChange={(e) => setEventType(e.target.value)}
                     className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 block">Staff Requerido</label>
+                  <label className="text-xs font-bold text-slate-700 block">Required Staff</label>
                   <input
                     type="text"
-                    placeholder="Ej: 3 Promotoras"
+                    placeholder="e.g., 3 Promoters"
                     value={marketingStaff}
                     onChange={(e) => setMarketingStaff(e.target.value)}
                     className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 block">Valor / Presupuesto</label>
+                  <label className="text-xs font-bold text-slate-700 block">Value / Budget</label>
                   <input
                     type="text"
-                    placeholder="Ej: $1,200.00"
+                    placeholder="e.g., $1,200.00"
                     value={marketingValue}
                     onChange={(e) => setMarketingValue(e.target.value)}
                     className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
@@ -688,7 +688,7 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
           <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl text-[11px] text-slate-500 flex items-start gap-2 mt-4" id="crm-form-disclaimer">
             <Info className="h-4 w-4 text-indigo-500 shrink-0 mt-0.5" />
             <p>
-              La información se guardará en tiempo real en la base de datos sincronizada de Firebase. Si modificas la pestaña de un cliente, este cambiará automáticamente de lista en la sección principal de CRM.
+              Information will be saved in real-time in the synchronized Firebase database. If you change a client's tab, they will automatically move in the main CRM section.
             </p>
           </div>
 
@@ -700,14 +700,14 @@ export default function CRMFormModal({ isOpen, onClose, onSave, client }: CRMFor
               className="px-4 py-2 border border-slate-200 hover:border-slate-300 text-slate-600 rounded-xl text-xs font-bold transition-all hover:bg-slate-50"
               id="cancel-crm-form-btn"
             >
-              Cancelar
+              Cancel
             </button>
             <button
               type="submit"
               className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-600/10 transition-all flex items-center gap-1"
               id="save-crm-client-btn"
             >
-              {client ? "Guardar Cambios" : "Crear Registro"}
+              {client ? "Save Changes" : "Create Record"}
             </button>
           </div>
         </form>

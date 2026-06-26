@@ -58,7 +58,7 @@ export interface CRMClient {
   phone: string;
   company: string;
   value: number; // estimated deal size
-  stage: "Prospecto" | "Contactado" | "Negociación" | "Ganado" | "Perdido";
+  stage: "Lead" | "Contacted" | "Negotiation" | "Won" | "Lost";
   notes: ClientNote[];
   tasks: ClientTask[];
   createdAt: string;
